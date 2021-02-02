@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<title>Aeris JS - Severe Module</title>
+
+	<style>
+	html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+    #app {
+        height: 100%;
+        width: 100%;
+    }
+    </style>
+
+    <script src="https://cdn.aerisapi.com/sdk/js/1.4.1/aerisweather.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/1.4.1/aerisweather.css">
+
+</head>
+<body>
+
+    <div id="app"></div>
+
+<script>
+window.addEventListener('load', () => {
+
+    // Update with your Aeris account access keys
+    const aeris = new AerisWeather('<%= htmlWebpackPlugin.options.aeris.clientId %>', '<%= htmlWebpackPlugin.options.aeris.clientSecret %>');
+
+    aeris.apps().then((apps) => {
+        const app = new apps.InteractiveMapApp('#app', {
+            map: {
+                map: {
+                    zoom: 6,
+                    
+                },
+                center: {
+                        lat: 40.694795764697896,
+                        lon: -122.328857
+                },
+              //  refresh: 120
+            },
+            panels: {
+                layers: {
+                    buttons: [{    
+                        value: 'radar',
+                        title: 'Radar',
+                        controls: {
+                            settings: [{
+                                type: 'opacity'
+                            }]
+                        }   
+                    },{
+                        value: 'convective',
+                        title: 'Convective Outlook'
+                    }]
+                }
+            }
+        });
+
+        // Add an instance of your module to the map application
+        app.modules.add(new Severe());
+
+    });
+
+});
+</script>
+
+</body>
+</html>

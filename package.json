@@ -1,0 +1,49 @@
+{
+  "name": "severe-module-src",
+  "moduleName": "Severe",
+  "version": "0.0",
+  "main": "index.js",
+  "author": "Ben Collin",
+  "homepage": "",
+  "license": "MIT",
+  "scripts": {
+    "build:js": "rm -fr dist; tsc --sourceMap false --outDir dist/src; babel --config-file ./babel-nodejs.config.js dist/src --out-dir dist/src",
+    "build:dev": "webpack",
+    "build:prod": "NODE_ENV='production' webpack -p --env production",
+    "build": "yarn build:js; yarn build:prod; rm dist/index.html",
+    "publish": "yarn build:js; npm publish",
+    "dev-server": "NODE_ENV='development' webpack-dev-server"
+  },
+  "files": [
+    "/dist",
+    "/docs",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.7",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.8.7",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "clean-webpack-plugin": "^3.0.0",
+    "dotenv": "^8.2.0",
+    "html-webpack-harddisk-plugin": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "regenerator-runtime": "^0.13.3",
+    "terser-webpack-plugin": "^2.2.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0",
+    "webpack-bundle-analyzer": "^3.6.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "dependencies": {
+    "@aerisweather/javascript-sdk": "^1.4.0"
+  }
+}
