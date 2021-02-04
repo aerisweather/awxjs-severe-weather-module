@@ -37,11 +37,11 @@ class SevereGroup extends NewModuleGroup {
      //      super();
      //      this._app = app;
 
-          
+
      // }
      get id() {
           return 'severe';
-          
+
      }
 
      async load(): Promise<IMapSourceModule[]> {
@@ -67,13 +67,13 @@ class SevereGroup extends NewModuleGroup {
 		});
 
      }
-     
+
      controls() {
           //const moduleButtons = this.modules ? this.modules.map((m) => m.controls()) : [];
          // const moduleButtons: any = [];
           //console.log(moduleButtons);
           const moduleButtons = [
-              
+
                {
                     value: 'warnings',
                     title: 'Severe Warnings'
@@ -110,7 +110,7 @@ class SevereGroup extends NewModuleGroup {
                     title: 'Lightning Areas'
                }
                ];
-        
+
           // const myButtons = [];
           // myButtons.push({value: 'radar',
           //      title: 'Radar'});
@@ -126,24 +126,24 @@ class SevereGroup extends NewModuleGroup {
      onMarkerClick(marker: any, data: any) {
           if (data) {
               const source = data.awxjs_source;
-              if (source == 'stormcells') {
-                  console.log(data);
-                  const popupContent = getStormCellContent(data);
-                 
-               //    marker.unbindPopup().bindPopup(popupContent, {
-               //        className: 'tropical-popup',
-               //        maxWidth : 500,
-               //    }).openPopup();
-                 this.app.map.showCallout(data.marker, popupContent);
-                 const cellId = `${data.radarID}_${data.cellID}`;
-                 const newData = {stormcells: data};
-                 
-                 this.app.showInfo('stormcells', `Cell ID ${cellId}`).load(null, newData);
-              }
+          //     if (source == 'stormcells') {
+          //         console.log(data);
+          //         const popupContent = getStormCellContent(data);
+
+          //      //    marker.unbindPopup().bindPopup(popupContent, {
+          //      //        className: 'tropical-popup',
+          //      //        maxWidth : 500,
+          //      //    }).openPopup();
+          //        this.app.map.showCallout(data.marker, popupContent);
+          //        const cellId = `${data.radarID}_${data.cellID}`;
+          //        const newData = {stormcells: data};
+
+          //        this.app.showInfo('stormcells', `Cell ID ${cellId}`).load(null, newData);
+          //     }
                if (source == 'stormreports') {
                     const source = data.awxjs_source;
                     const popupContent =getStormReportMarkerContent(data);
-            
+
                     marker.unbindPopup().bindPopup(popupContent, {
                          className: 'tropical-popup',
                          maxWidth : 500,
@@ -151,7 +151,7 @@ class SevereGroup extends NewModuleGroup {
                     this.app.map.showCallout(data.marker, popupContent);
                }
           }
-          
+
       }
 }
 
