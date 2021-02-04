@@ -36,7 +36,7 @@ class StormCells extends MapSourceModule {
 
         return {
             type: 'vector',
-            requreBounds: true,
+            requiresBounds: true,
             data: {
                 service: () => {
                     return this._request;
