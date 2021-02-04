@@ -13,6 +13,57 @@ const colors: any = {
 	tornado: '#ff2600'
 };
 
+const indexForIntensity = (value: number): any => {
+	if (value >= 60) {
+		return { index: 5, label: 'Extreme' };
+	} else if (value >= 55) {
+		return { index: 4, label: 'Very Heavy' };
+	} else if (value >= 50) {
+		return { index: 3, label: 'Heavy' };
+	} else if (value >= 35) {
+		return { index: 2, label: 'Moderate' };
+	} else if (value >= 20) {
+		return { index: 1, label: 'Light' };
+	}
+	return { index: 0, label: 'Very Light' };
+};
+
+const indexForSeverity = (value: number): any => {
+	// `value` is in the range 0..10 and needs to be converted to an index value in
+	// the range 0..5
+	const index = Math.floor(value / 2);
+	const labels = ['None', 'Minimal', 'Low', 'Moderate', 'High', 'Extreme'];
+
+	return { index, label: labels[index] };
+};
+
+const getSeverity = (cell: any = {}): number => {
+	const { hail, mda, tvs, traits } = cell;
+	let severity = 0;
+
+	if (isset(hail) && hail.probSevere > 0) {
+		severity = hail.probSevere / 10;
+	}
+
+	if (isset(traits) && severity < 10) {
+		const { rotating, tornado } = traits;
+		if (rotating) {
+			severity = 7;
+		}
+		if (tornado) {
+			severity = 10;
+		}
+	}
+
+	if (severity < 8) {
+		if (tvs === 1) {
+			severity = 8;
+		}
+	}
+
+	return severity;
+};
+
 const getColor = (code: string): string => {
 	code = (code || 'none').toLowerCase();
 	return colors[code] || '#999999';
@@ -97,6 +148,7 @@ class StormCells extends MapSourceModule {
 					const req = this.account.api()
 						.endpoint('places')
 						.place(`${lat},${long}`)
+						.radius('10mi')
 						.fields('place.name,place.state');
 					request.addRequest(req);
 				});
@@ -107,7 +159,6 @@ class StormCells extends MapSourceModule {
 				// place info
 				requiresData: true,
 				data: (data: any): any => {
-					console.log('DATA', data);
 					if (!data || !data.stormcells) return null;
 					return data;
 				},
@@ -134,6 +185,60 @@ class StormCells extends MapSourceModule {
 							${movementBlock}
 						</div>
 					`;
+				}
+			}, {
+				// severity levels
+				requiresData: true,
+				data: (data: any) => {
+					if (!data || !data.stormcells) return null;
+
+					const { dbzm } = data.stormcells || {};
+					const result: any[] = [];
+
+					if (isset(dbzm)) {
+						result.push({
+							type: 'intensity', name: 'Intensity', value: dbzm
+						});
+					}
+
+					const severity = getSeverity(data.stormcells);
+					result.push({
+						type: 'severity', name: 'Severity', value: severity
+					});
+
+					return result;
+				},
+				renderer: (data: any): string => {
+					const hazards = data.map((hazard: any) => {
+						let index = 0;
+						let level = '';
+
+						if (hazard.type === 'intensity') {
+							const { index: hazardIndex, label } = indexForIntensity(hazard.value);
+							index = hazardIndex;
+							level = label;
+						} else if (hazard.type === 'severity') {
+							const { index: hazardIndex, label } = indexForSeverity(hazard.value);
+							index = hazardIndex;
+							level = label;
+						}
+
+						const indexStr = `${index}`.replace(/\./g, 'p');
+						const percent = Math.round((index / 5) * 1000) / 10;
+
+						return (`
+							<div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
+								<div class="awxjs__app__ui-panel-info__hazard-label">${hazard.name}</div>
+								<div class="awxjs__app__ui-panel-info__hazard-bar">
+									<div class="awxjs__app__ui-panel-info__hazard-bar-inner">
+										<div class="awxjs__app__ui-panel-info__hazard-bar-progress awxjs__app__ui-panel-info__hazard-indice-fill-${indexStr}" style="width:${percent}%;"></div>
+									</div>
+								</div>
+								<div class="awxjs__app__ui-panel-info__hazard-value awxjs__app__ui-panel-info__hazard-value-${indexStr}">${level}</div>
+							</div>
+						`);
+					});
+					return `<div class="awxjs__app__ui-panel-info__hazards">${hazards.join('')}</div>`;
 				}
 			}, {
 				// forecast track
@@ -265,7 +370,6 @@ class StormCells extends MapSourceModule {
 		if (!data) return;
 
 		const { id } = data;
-		console.log('cell', id, {...data});
 		this.showInfoPanel(`Cell ${id}`).load({ p: id }, { stormcells: data });
 	}
 }
