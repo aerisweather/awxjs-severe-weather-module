@@ -24,10 +24,11 @@ export const getStormCellMarker = (data: any): any => {
     const isLast = data.isLast;
     const type: string = get(data, 'traits.type');
     if (isLast) {
-        console.log(data);
-        console.log(data.movement);
-        const bearing = data.movement ? data.movement.dirToDEG : 0;
-        console.log(bearing);
+        // console.log(data);
+        // console.log(data.movement);
+        // const bearing = data.movement ? data.movement.dirToDEG : 0;
+        const bearing = data.bearing ? data.bearing: 0;
+      
         return {
             className: 'marker-stormcell',
             svg: {
@@ -67,10 +68,12 @@ export const getStormCellMarker = (data: any): any => {
         };
 }
 export const formatStormCells = (data: any): any => {
-    console.log('formatcells',data);
+    //console.log('formatcells',data);
     if (isArray(data)) {
-        data.forEach((cell: any) => {
+        data.forEach((cell: any) => { 
             const { id, ob, loc, forecast, place, traits } = cell;
+            const startLat = loc.lat;
+            const startLng = loc.long;
 			cell.points = [{
                 id,
 				...ob,
@@ -85,6 +88,9 @@ export const formatStormCells = (data: any): any => {
 			}];
 			if (forecast && forecast.locs) {
 				(forecast.locs || []).forEach((loc: any) => {
+                    const endLat = loc.lat;
+                    const endLng = loc.long;
+                    const trueBearing = bearing(startLat,startLng,endLat,endLng);
                     let isLast = false;
                     if (forecast.locs[forecast.locs.length -1] === loc) {
                         isLast = true;
@@ -92,6 +98,7 @@ export const formatStormCells = (data: any): any => {
 						...ob,
 						timestamp: loc.timestamp,
                         dateTimeISO: loc.dateTimeISO,
+                        bearing: trueBearing,
                         place,
                         forecast,
                         traits,
@@ -193,3 +200,26 @@ export const getStormReportMarkerContent = (data: any) => {
             </div>`);
 
 };
+
+const toRadians = (degrees: any) => {
+    return degrees * Math.PI/180;
+
+}
+
+const toDegrees = (radians: any) => {
+    return radians * 180/Math.PI;
+}
+const bearing = (startLat: any, startLng: any, endLat: any, endLng: any) => {
+
+    startLat = toRadians(startLat);
+    startLng = toRadians(startLng);
+    endLat = toRadians(endLat);
+    endLng = toRadians(endLng);
+
+    const y = Math.sin(endLng - startLng) * Math.cos(endLat);
+    const x = Math.cos(startLat) * Math.sin(endLat) - Math.sin(startLat) * Math.cos(endLat) * Math.cos(endLng - startLng);
+    let bearing = Math.atan2(y, x);
+    bearing = toDegrees(bearing);
+    return (bearing + 360) % 360;
+
+}
