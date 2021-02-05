@@ -1,6 +1,6 @@
 import ModuleGroup from '@aerisweather/javascript-sdk/dist/modules/ModuleGroup';
 import  IMapSourceModule from '@aerisweather/javascript-sdk/dist/modules/interfaces/IMapSourceModule';
-import {getStormCellContent, getStormReportMarkerContent} from './utils';
+import {getStormReportMarkerContent} from './utils';
 import {loader as Warnings} from './warnings';
 import {loader as StormThreats} from './stormthreats';
 import {loader as LightningThreats} from './lightningthreats';
@@ -31,14 +31,7 @@ class NewModuleGroup extends ModuleGroup {
 }
 
 class SevereGroup extends NewModuleGroup {
-     // private _app: InteractiveMapApp;
-     // private _map: InteractiveMap;
-     // constructor(account: Account, app: InteractiveMapApp, map: InteractiveMap = null) {
-     //      super();
-     //      this._app = app;
-
-
-     // }
+     
      get id() {
           return 'severe';
 

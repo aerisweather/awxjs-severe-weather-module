@@ -12,13 +12,7 @@ class StormThreats extends MapSourceModule {
     }
 
     source(): any {
-        // const request = this.account
-        //     .api()
-        //     .endpoint('stormcells/summary')
-        //     .format('geojson')
-        //     .limit(1)
-        //     .filter('threat,geo');
-
+ 
         const properties: any = {
             root: 'features',
             path: 'geometry'

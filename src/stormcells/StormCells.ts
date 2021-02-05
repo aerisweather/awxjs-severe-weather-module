@@ -1,7 +1,7 @@
 import MapSourceModule from '@aerisweather/javascript-sdk/dist/modules/MapSourceModule';
 import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
 import account from '@aerisweather/javascript-sdk';
-import {getStormCellForecast, getStormCellContent, formatStormCells, getStormCellMarker} from '../utils';
+import {formatStormCells, getStormCellMarker} from '../utils';
 import {isEmpty, formatDate, isArray, get, isset} from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import { formatDataValue } from '@aerisweather/javascript-sdk/dist/utils/units';
@@ -97,33 +97,7 @@ class StormCells extends MapSourceModule {
             },
             style: {
                 marker: (data: any) => getStormCellMarker(data),
-                // marker: (data: any) => {
-                //     //console.log(data);
-                //     const arrow = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 100"><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" /></marker></defs><line x1="0" y1="50" x2="250" y2="50" stroke="#000" stroke-width="8" marker-end="url(#arrowhead)" /></svg>`;
-
-                //    //console.log(data.id,data.loc,data.dateTimeISO);
-                //     const type: string = get(data, 'traits.type');
-                //     const isCurrent = data.isCurrent;
-
-                //     return {
-                //         className: 'marker-stormcell',
-                //         svg: {
-                //             shape: {
-                //                 type: 'circle',
-                //                 fill: {
-                //                     color: this.color(type)
-                //                 },
-                //                 stroke: {
-                //                     color: '#ffffff',
-                //                     width: 2
-                //                 }
-                //             }
-                //         },
-                //         size: isCurrent ? [15,15] : [10, 10]
-                //     };
-                // },
                 polyline: (data: any) => {
-				//	const type: string = get(data, 'traits.type');
 					return {
 						stroke: {
 							color: ('#FDFEFE'),
@@ -369,8 +343,9 @@ class StormCells extends MapSourceModule {
 	onMarkerClick(marker: any, data: any) {
 		if (!data) return;
 
-		const { id } = data;
-		this.showInfoPanel(`Cell ${id}`).load({ p: id }, { stormcells: data });
+        const { id } = data;
+        const cellId = `${data.radarID}_${data.cellID}`;
+		this.showInfoPanel(`Cell ${cellId}`).load({ p: id }, { stormcells: data });
 	}
 }
 export default StormCells;

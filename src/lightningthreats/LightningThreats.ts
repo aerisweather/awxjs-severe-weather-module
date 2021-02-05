@@ -8,13 +8,7 @@ class LightningThreats extends MapSourceModule {
     }
 
     source(): any {
-        const request = this.account
-            .api()
-            .endpoint('lightning/summary')
-            .format('geojson')
-            .filter('threat,geo')
-            .from('-15minutes');
-
+ 
         const properties: any = { 
             root: 'features',
             path: 'geometry'

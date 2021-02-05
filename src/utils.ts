@@ -105,37 +105,6 @@ export const formatStormCells = (data: any): any => {
                 }
 				});
 			}
-			// const { ob, loc, forecast, traits, place, id} = cell;
-			// cell.points = [{
-            //     id,
-			// 	...ob,
-            //     traits,
-            //     forecast,
-            //     place,
-			// 	loc: {
-			// 		lat: loc.lat,
-			// 		lon: loc.long
-			// 	},
-			// 	isCurrent: true
-			// }];
-			// if (forecast && forecast.locs) {
-			// 	(forecast.locs || []).forEach((loc: any) => {
-			// 		cell.points.push({
-            //             id,
-			// 			...ob,
-			// 			timestamp: loc.timestamp,
-			// 			dateTimeISO: loc.dateTimeISO,
-            //             traits,
-            //             place,
-            //             forecast,
-			// 			loc: {
-			// 				lat: loc.lat,
-			// 				lon: loc.long
-			// 			},
-			// 			isCurrent: false
-			// 		});
-			// 	});
-			// }
         });
     }
    // console.log(data);
@@ -164,84 +133,6 @@ export const getStormCellForecast = (aeris: any, forecast: any) => {
     });
     return final;
 }
-
-export const getStormCellContent = (data: any) => {
-    if (isEmpty(data))return null;
-    const place = {...data.place};
-    const ob = {...data.ob};
-    const state = place.state.toUpperCase();
-    const movement = {...ob.movement};
-    const hail = {...ob.hail};
-    let movementInfo = '';
-    let hailInfo = '';
-    let maxdBZ = '';
-    let echoTop = '';
-
-    if (!isEmpty(movement)) {
-        movementInfo = `
-        <div class="row">
-            <div class="label">Movement:</div>
-            <div class="value">${movement.dirTo} at ${movement.speedMPH} mph</div>
-        </div>`;
-    }
-    if (!isEmpty(hail)) {
-        if (hail.maxSizeIN > 0){
-        hailInfo = `
-            <div class="row">
-                <div class="label">Severe Hail:</div>
-                <div class="value">${hail.probSevere}%</div>
-            </div>
-            <div class="row">
-                <div class="label">Hail:</div>
-                <div class="value">${hail.prob}%</div>
-            </div>
-            <div class="row">
-                <div class="label">Max Hail Size:</div>
-                <div class="value">${hail.maxSizeIN}in</div>
-            </div>`;
-        }
-    }
-    if (!isEmpty(ob.dbzm)) {
-        maxdBZ = `
-        <div class="row">
-            <div class="label">Max Reflectivity:</div>
-            <div class="value">${ob.dbzm} dBZ</div>
-        </div>`;
-    }
-    if (!isEmpty(ob.topFT)) {
-        echoTop = `
-        <div class="row">
-            <div class="label">Echo Top:</div>
-            <div class="value">${ob.topFT} ft</div>
-        </div>`;
-    }
-    //const state = place.state.toUpperCase();
-    const near = `${strings.toName(place.name)}, ${state.toUpperCase()}`;
-    //const observed = utils.dates.format(new Date(data.ob.timestamp * 1000), 'h:mm a, MMM D, YYYY');
-    return (`<div class="content">
-    <div class="title">Cell ID ${data.id}</div>
-    <div class="row">
-        <div class="label">Near:</div>
-        <div class="value">${near}</div>
-    </div>
-    <div class="row">
-        <div class="label">Observed:</div>
-        <div class="value">${formatDate(new Date(data.timestamp * 1000), 'h:mm a, MMM d, yyyy')}</div>
-    </div>
-    ${movementInfo}
-    ${hailInfo}
-    ${maxdBZ}
-    ${echoTop}
-    <div class="row">
-        <div class="label">Radar Site:</div>
-        <div class="value">${data.radarID}</div>
-    </div>
-    </div>
-    `);    
-
-
-
-};
 
 export const getStormReportMarkerContent = (data: any) => {
     
