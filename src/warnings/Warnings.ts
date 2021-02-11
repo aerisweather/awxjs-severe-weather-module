@@ -1,7 +1,7 @@
 import MapSourceModule from '@aerisweather/javascript-sdk/dist/modules/MapSourceModule';
 import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
 import * as utils from '@aerisweather/javascript-sdk/dist/utils/index';
-
+import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 class Warnings extends MapSourceModule {
 	private _request: ApiRequest;
  
@@ -54,8 +54,21 @@ class Warnings extends MapSourceModule {
 			title: 'Warnings'
 		};
     }
-    onInit() {
-		
+    infopanel(): any {
+        return {
+            views: [{
+                data: (data: any) => {
+                    return data.alert.details;
+                },
+                renderer: (data: any) => {
+                    if (!data) return null;
+                    return `<div class="alert">${(data.body || '').replace(/\n/g, '<br>')}</div>`;
+                }
+            }]
+        }
+    }
+
+    onInit() {	
 		const request = this.account.api()
             .endpoint('advisories')
             .action(ApiAction.SEARCH)
@@ -66,5 +79,14 @@ class Warnings extends MapSourceModule {
             .format('geojson');
 		this._request = request;
     }
+
+    onShapeClick(shape: any, data: any) {
+        const source = data.awxjs_source;
+        const props = data.properties || {};
+        console.log(props);
+        if (source == 'warnings') {
+             this.showInfoPanel(props.details.name).load( `${toName(props.details.name)}`, { alert: props });
+        }
+   }
 }
 export default Warnings;
