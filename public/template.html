@@ -19,8 +19,8 @@
     }
     </style>
 
-    <script src="https://cdn.aerisapi.com/sdk/js/1.4.1/aerisweather.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/1.4.1/aerisweather.css">
+    <script src="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.css">
 
 </head>
 <body>
@@ -37,8 +37,7 @@ window.addEventListener('load', () => {
         const app = new apps.InteractiveMapApp('#app', {
             map: {
                 map: {
-                    zoom: 7,
-                    
+                    zoom: 6
                 },
                 center: {
                         lat: 31.694795764697896,
@@ -59,7 +58,15 @@ window.addEventListener('load', () => {
                     },{
                         value: 'convective',
                         title: 'Convective Outlook'
-                    }]
+                    },
+                {
+                    title: "Geocolor",
+                                value: "satellite-geocolor,states-outlines-dk"
+                },{
+                    title: "Infrared",
+                                value: "satellite:75"
+                }
+            ]
                 }
             }
         });

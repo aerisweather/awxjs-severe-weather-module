@@ -104,11 +104,6 @@ class SevereGroup extends NewModuleGroup {
                }
                ];
 
-          // const myButtons = [];
-          // myButtons.push({value: 'radar',
-          //      title: 'Radar'});
-          // myButtons.push(moduleButtons);
-          //myButtons.push(this.modules.map((m) => m.controls()));
           return {
                title: 'Severe Weather',
                //buttons: this.modules ? this.modules.map((m) => m.controls()) : []

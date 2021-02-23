@@ -286,7 +286,8 @@ class StormCells extends MapSourceModule {
 						value: `${data.dbzm} dbz`
 					}, {
 						label: 'Echo Top',
-						value: formatDataValue(data, 'htFT', 'htM', metric)
+						//value: formatDataValue(data, 'htFT', 'htM', metric)
+						value: `${data.htFT} ft`
 					}, {
 						label: 'TVS',
 						value: data.tvs === 1 ? 'Yes' : 'No'
@@ -298,7 +299,8 @@ class StormCells extends MapSourceModule {
 						value: `${get(data, 'hail.probSevere') || 0}% Probability`
 					}, {
 						label: 'Max Hail Size',
-						value: formatDataValue(data, 'hail.maxSizeIN', 'hail.maxSizeCM', metric)
+						//value: formatDataValue(data, 'hail.maxSizeIN', 'hail.maxSizeCM', metric)
+						value: `${data.hail.maxSizeIN} in`
 					}, {
 						label: 'MDA',
 						value: data.mda
