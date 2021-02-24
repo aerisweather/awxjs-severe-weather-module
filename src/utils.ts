@@ -141,6 +141,32 @@ export const getStormCellForecast = (aeris: any, forecast: any) => {
     return final;
 }
 
+export const getMagnitude = (data: any) => {
+    let magnitude = '';
+    if (data.cat === 'snow') {
+        if (!isEmpty(data.detail.snowIN)) {
+            magnitude = `${data.detail.snowIN} inches`;
+        }
+    }
+    if (data.cat === 'wind') {
+        if (!isEmpty(data.detail.windSpeedMPH)) {
+            magnitude = `${data.detail.windSpeedMPH} mph`;
+        }
+    }
+    if (data.cat === 'rain') {
+        if (!isEmpty(data.detail.rainIN)) {
+            magnitude = `${data.detail.rainIN} inches`;
+        }
+    }
+    if (data.cat === 'hail') {
+        if (!isEmpty(data.detail.hailIN)) {
+            magnitude = `${data.detail.hailIN} inches`;
+        }
+    }
+    
+    return magnitude;
+}
+
 export const getStormReportMarkerContent = (data: any) => {
     
     const latPos = Math.abs(data.loc.lat) + ((data.loc.lat < 0) ? 'S' : 'N');

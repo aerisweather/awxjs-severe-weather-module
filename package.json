@@ -1,5 +1,5 @@
 {
-  "name": "severe-module-src",
+  "name": "awxjs-severe-weather-module",
   "moduleName": "Severe",
   "version": "0.0",
   "main": "index.js",

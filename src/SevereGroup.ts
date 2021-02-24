@@ -53,7 +53,7 @@ class SevereGroup extends NewModuleGroup {
                     warnings,
                     stormthreats,
                     lightningthreats,
-                    // stormreports,
+                    stormreports,
                     stormcells
 			].map((Module) => new Module.default()); // eslint-disable-line new-cap
 			resolve(this._modules);
@@ -93,7 +93,10 @@ class SevereGroup extends NewModuleGroup {
                     value: 'lightning-strikes-5m-icons',
                     title: 'Lightning Strikes'
                },
-               {   value: 'stormreports',title: 'Severe Reports' },
+               {   
+                    value: 'stormreports',
+                    title: 'Severe Reports' 
+               },
                {
                     value: 'stormthreats',
                     title: 'Threat Areas'
@@ -128,16 +131,16 @@ class SevereGroup extends NewModuleGroup {
 
           //        this.app.showInfo('stormcells', `Cell ID ${cellId}`).load(null, newData);
           //     }
-               if (source == 'stormreports') {
-                    const source = data.awxjs_source;
-                    const popupContent =getStormReportMarkerContent(data);
+               // if (source == 'stormreports') {
+               //      const source = data.awxjs_source;
+               //      const popupContent =getStormReportMarkerContent(data);
 
-                    marker.unbindPopup().bindPopup(popupContent, {
-                         className: 'tropical-popup',
-                         maxWidth : 500,
-                    }).openPopup();
-                    this.app.map.showCallout(data.marker, popupContent);
-               }
+               //      marker.unbindPopup().bindPopup(popupContent, {
+               //           className: 'tropical-popup',
+               //           maxWidth : 500,
+               //      }).openPopup();
+               //      this.app.map.showCallout(data.marker, popupContent);
+               // }
           }
 
       }
