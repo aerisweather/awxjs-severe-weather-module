@@ -43,11 +43,7 @@ class SevereGroup extends NewModuleGroup {
           const lightningthreats = await LightningThreats();
           const stormreports = await StormReports();
           const stormcells = await StormCells();
-          // return new Promise((resolve, reject) => {
-               // this._modules = [new Severe()];
-               // resolve(this._modules);
 
-          //});
 		return new Promise<IMapSourceModule[]>((resolve, reject) => {
 			this._modules = [
                     warnings,
@@ -62,9 +58,6 @@ class SevereGroup extends NewModuleGroup {
      }
 
      controls() {
-          //const moduleButtons = this.modules ? this.modules.map((m) => m.controls()) : [];
-         // const moduleButtons: any = [];
-          //console.log(moduleButtons);
           const moduleButtons = [
 
                {
@@ -113,37 +106,6 @@ class SevereGroup extends NewModuleGroup {
                buttons: moduleButtons
           };
      }
-
-     onMarkerClick(marker: any, data: any) {
-          if (data) {
-              const source = data.awxjs_source;
-          //     if (source == 'stormcells') {
-          //         console.log(data);
-          //         const popupContent = getStormCellContent(data);
-
-          //      //    marker.unbindPopup().bindPopup(popupContent, {
-          //      //        className: 'tropical-popup',
-          //      //        maxWidth : 500,
-          //      //    }).openPopup();
-          //        this.app.map.showCallout(data.marker, popupContent);
-          //        const cellId = `${data.radarID}_${data.cellID}`;
-          //        const newData = {stormcells: data};
-
-          //        this.app.showInfo('stormcells', `Cell ID ${cellId}`).load(null, newData);
-          //     }
-               // if (source == 'stormreports') {
-               //      const source = data.awxjs_source;
-               //      const popupContent =getStormReportMarkerContent(data);
-
-               //      marker.unbindPopup().bindPopup(popupContent, {
-               //           className: 'tropical-popup',
-               //           maxWidth : 500,
-               //      }).openPopup();
-               //      this.app.map.showCallout(data.marker, popupContent);
-               // }
-          }
-
-      }
 }
 
 export default SevereGroup;

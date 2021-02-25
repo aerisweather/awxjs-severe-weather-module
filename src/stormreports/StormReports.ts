@@ -3,6 +3,41 @@ import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network
 import { ucfirst, ucwords } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import {getStormReportMarkerContent,getMagnitude} from '../utils';
 import {isEmpty, formatDate, isArray, get, isset} from '@aerisweather/javascript-sdk/dist/utils/index';
+
+
+const color = (code: string): string => {
+	code = code.toLowerCase();
+
+	switch (code) {
+		case 'avalanche':
+			return '#639fec';
+		case 'blizzard':
+			return '#4100e2';
+		case 'flood':
+			return '#117d00';
+		case 'fog':
+			return '#767676';
+		case 'ice':
+			return '#e100e2';
+		case 'hail':
+			return '#62def7';
+		case 'lightning':
+			return '#8c8c8c';
+		case 'rain':
+			return '#38e600';
+		case 'snow':
+			return '#175cef';
+		case 'tides':
+			return '#40db83';
+		case 'tornado':
+			return '#c50000';
+		case 'wind':
+			return '#d8cc00';
+		default:
+			return '#000000';
+	}
+};
+
 class StormReports extends MapSourceModule {
     private _request: ApiRequest;
 
@@ -24,7 +59,28 @@ class StormReports extends MapSourceModule {
                     return this._request;
                 },
                 // properties: properties
-            }
+            },
+            style: {
+                marker: (data: any) => {
+                    const type: string = get(data, 'report.cat');
+                    return {
+                        className: 'marker-stormreport',
+                        svg: {
+                            shape: {
+                                type: 'circle',
+                                fill: {
+                                    color: color(type)
+                                },
+                                stroke: {
+                                    color: '#ffffff',
+                                    width: 2
+                                }
+                            }
+                        },
+                        size: [14, 14]
+                    };
+                }
+            },
         }
     }
     infopanel(): any {

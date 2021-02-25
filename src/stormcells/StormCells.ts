@@ -100,11 +100,11 @@ class StormCells extends MapSourceModule {
                 polyline: (data: any) => {
 					return {
 						stroke: {
-							color: ('#FDFEFE'),
-							width: 4
+							color: '#ffffff',
+							width: 3
 						}
 					};
-				}
+				},
             }
         }
 	}
@@ -335,10 +335,7 @@ class StormCells extends MapSourceModule {
     onInit() {
 
 		const request = this.account.api()
-            .endpoint('stormcells');
-            // .format('geojson')
-            // .filter('threat,geo')
-            // .from('-15minutes');
+        .endpoint('stormcells');
 		this._request = request;
 	}
 
