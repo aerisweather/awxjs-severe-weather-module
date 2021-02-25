@@ -30,7 +30,7 @@ class NewModuleGroup extends ModuleGroup {
 	}
 }
 
-class SevereGroup extends NewModuleGroup {
+class Severe extends NewModuleGroup {
      
      get id() {
           return 'severe';
@@ -108,4 +108,4 @@ class SevereGroup extends NewModuleGroup {
      }
 }
 
-export default SevereGroup;
+export default Severe;
