@@ -3,9 +3,9 @@ Aeris JS SDK - Severe Weather Module
 
 Starting with version 1.3.0 of the [Aeris Javascript SDK](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/), you can now create and add [map source modules](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/map-modules/) to easily include custom data sources and layers to your [InteractiveMapApp](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/interactive-map-app/) and [InteractiveMap](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/interactive-map/) instances. 
 
-We've created this Observations module as an example for you to reference when creating your own custom modules for your mapping applications. Feel free to use this module in your own projects, whether you're using our [precompiled SDK scripts](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/getting-started/script-usage/) or [importing our NPM package](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/getting-started/module-usage/) into your Javascript projects.
+We've created this Severe module as an example for you to reference when creating your own custom modules for your mapping applications. Feel free to use this module in your own projects, whether you're using our [precompiled SDK scripts](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/getting-started/script-usage/) or [importing our NPM package](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/getting-started/module-usage/) into your Javascript projects.
 
-![AerisWeather JS - Observations Module](docs/img/screenshot.png)
+![AerisWeather JS - Observations Module](docs/img/screenshot2.png)
 
 ## Using the Module
 
