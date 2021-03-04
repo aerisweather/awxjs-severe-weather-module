@@ -22,7 +22,7 @@ The following is an example of importing and using the project source files in y
 ```javascript
 import AerisWeather from '@aerisweather/javascript-sdk/dist/AerisWeather';
 import InteractiveMapApp from '@aerisweather/javascript-sdk/dist/apps/InteractiveMapApp';
-import Severe from 'path/to/awxjs-observations-module/dist/src/Severe';
+import Severe from 'path/to/awxjs-severe-weather-module/dist/src/Severe';
 
 const aeris = new AerisWeather('CLIENT_ID', 'CLIENT_SECRET');
 
