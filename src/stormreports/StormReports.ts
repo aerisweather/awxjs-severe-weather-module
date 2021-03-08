@@ -1,41 +1,41 @@
 import MapSourceModule from '@aerisweather/javascript-sdk/dist/modules/MapSourceModule';
-import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
-import { ucfirst, ucwords } from '@aerisweather/javascript-sdk/dist/utils/strings';
-import {getStormReportMarkerContent,getMagnitude} from '../utils';
-import {isEmpty, formatDate, isArray, get, isset} from '@aerisweather/javascript-sdk/dist/utils/index';
+import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
+import { ucwords } from '@aerisweather/javascript-sdk/dist/utils/strings';
+import { formatDate, get} from '@aerisweather/javascript-sdk/dist/utils/index';
+import {getMagnitude} from '../utils';
 
 
 const color = (code: string): string => {
-	code = code.toLowerCase();
+    code = code.toLowerCase();
 
-	switch (code) {
-		case 'avalanche':
-			return '#639fec';
-		case 'blizzard':
-			return '#4100e2';
-		case 'flood':
-			return '#117d00';
-		case 'fog':
-			return '#767676';
-		case 'ice':
-			return '#e100e2';
-		case 'hail':
-			return '#62def7';
-		case 'lightning':
-			return '#8c8c8c';
-		case 'rain':
-			return '#38e600';
-		case 'snow':
-			return '#175cef';
-		case 'tides':
-			return '#40db83';
-		case 'tornado':
-			return '#c50000';
-		case 'wind':
-			return '#d8cc00';
-		default:
-			return '#000000';
-	}
+    switch (code) {
+    case 'avalanche':
+        return '#639fec';
+    case 'blizzard':
+        return '#4100e2';
+    case 'flood':
+        return '#117d00';
+    case 'fog':
+        return '#767676';
+    case 'ice':
+        return '#e100e2';
+    case 'hail':
+        return '#62def7';
+    case 'lightning':
+        return '#8c8c8c';
+    case 'rain':
+        return '#38e600';
+    case 'snow':
+        return '#175cef';
+    case 'tides':
+        return '#40db83';
+    case 'tornado':
+        return '#c50000';
+    case 'wind':
+        return '#d8cc00';
+    default:
+        return '#000000';
+    }
 };
 
 class StormReports extends MapSourceModule {
@@ -46,19 +46,11 @@ class StormReports extends MapSourceModule {
     }
 
     source(): any {
-        const properties: any = { 
-            root: 'features',
-            path: 'geometry'
-        };
-
         return {
             type: 'vector',
             requreBounds: true,
             data: {
-                service: () => {
-                    return this._request;
-                },
-                // properties: properties
+                service: () => this._request
             },
             style: {
                 marker: (data: any) => {
@@ -80,20 +72,23 @@ class StormReports extends MapSourceModule {
                         size: [14, 14]
                     };
                 }
-            },
+            }
         }
     }
+
     infopanel(): any {
         return {
             views: [{
                 data: (data: any) => {
-                    if (!data) return null;
                     const payload = get(data, 'stormreports');
-					if (!payload) return null;
-					return payload;
+                    if (!payload) {
+                        return null;
+                    }
+                    return payload;
                 },
                 renderer: (data: any) => {
-                    if (!data) return;
+                    if (!data) return null;
+
                     const rows: any[] = [{
                         label: 'Location',
                         value: data.report.name
@@ -109,44 +104,45 @@ class StormReports extends MapSourceModule {
                     },{
                         label: 'Remarks',
                         value: data.report.comments || ""
-                    }
+                    }];
 
-                    ];
                     return (`
-                    <div class="awxjs__app__ui-panel-info__table">
-                    ${rows.reduce((result, row) => {
-                        result.push(`
-                            <div class="awxjs__ui-row">
-                                <div class="awxjs__ui-expand label">${row.label}</div>
-                                <div class="awxjs__ui-expand value">${row.value}</div>
-                            </div>
-                        `);
-                        return result;
-                    }, []).join('\n')}
-                </div>
+						<div class="awxjs__app__ui-panel-info__table">
+						${rows.reduce((result, row) => {
+                            result.push(`
+								<div class="awxjs__ui-row">
+									<div class="awxjs__ui-expand label">${row.label}</div>
+									<div class="awxjs__ui-expand value">${row.value}</div>
+								</div>
+							`);
+                            return result;
+                        }, []).join('\n')}
+                		</div>
                     `);
                 }
             }]
         }
     }
+
     onMarkerClick(marker: any, data: any) {
-		if (!data) return;
+        if (!data) return;
         const { id } = data;
         const type = ucwords(data.report.type);
-		this.showInfoPanel(`${type}`).load({ p: id }, { stormreports: data });
-	}
+        this.showInfoPanel(`${type}`).load({ p: id }, { stormreports: data });
+    }
 
     controls(): any {
-		return {
-			value: this.id,
-			title: 'Storm Reports'
-		};
+        return {
+            value: this.id,
+            title: 'Storm Reports'
+        };
     }
-    onInit() {	
-		const request = this.account.api()
-        .endpoint('stormreports');
-		this._request = request;
+
+    onInit() {
+        const request = this.account.api()
+            .endpoint('stormreports');
+        this._request = request;
     }
-    
 }
+
 export default StormReports;
