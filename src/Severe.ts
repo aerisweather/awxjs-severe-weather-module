@@ -6,34 +6,10 @@ import {loader as LightningThreats} from './lightningthreats';
 import {loader as StormReports} from './stormreports';
 import {loader as StormCells} from './stormcells';
 
-// class NewModuleGroup extends ModuleGroup {
-// 	private _account: Account;
-// 	private _app: InteractiveMapApp;
-// 	private _map: InteractiveMap;
-// 	initialize(account: Account, app: InteractiveMapApp, map: InteractiveMap = null) {
-// 	    this._account = account;
-// 	    this._app = app;
-// 	    this._map = app ? app.map : map;
-// 	}
-
-// 	public get account(): Account {
-// 	    return this._account;
-// 	}
-
-// 	public get app(): InteractiveMapApp {
-// 	    return this._app;
-// 	}
-
-// 	public get map(): InteractiveMap {
-// 	    return isset(this._app) ? this._app.map : this._map;
-// 	}
-// }
-
 class Severe extends ModuleGroup {
 
     get id() {
         return 'severe';
-
     }
 
     async load(): Promise<IMapSourceModule[]> {
@@ -53,13 +29,12 @@ class Severe extends ModuleGroup {
             ].map((Module) => new Module.default()); // eslint-disable-line new-cap
             resolve(this._modules);
         });
-
     }
 
     controls() {
-        const moduleButtons = [
-
-            {
+        return {
+            title: 'Severe Weather',
+            buttons: [{
                 value: 'warnings',
                 title: 'Severe Warnings'
             },{
@@ -84,25 +59,16 @@ class Severe extends ModuleGroup {
             },{
                 value: 'lightning-strikes-5m-icons',
                 title: 'Lightning Strikes'
-            },
-            {
+            },{
                 value: 'stormreports',
                 title: 'Severe Reports'
-            },
-            {
+            },{
                 value: 'stormthreats',
                 title: 'Threat Areas'
-            },
-            {
+            },{
                 value: 'lightningthreats',
                 title: 'Lightning Areas'
-            }
-        ];
-
-        return {
-            title: 'Severe Weather',
-            // buttons: this.modules ? this.modules.map((m) => m.controls()) : []
-            buttons: moduleButtons
+            }]
         };
     }
 }
