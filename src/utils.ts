@@ -12,7 +12,7 @@ const getBearing = (startLat: any, startLng: any, endLat: any, endLng: any) => {
     const ex = toRadians(endLng);
 
     const y = Math.sin(ex - sx) * Math.cos(ey);
-    const x = Math.cos(sy) * Math.sin(ey) - Math.sin(sy) * Math.cos(endLat) * Math.cos(ex - sx);
+    const x = Math.cos(sy) * Math.sin(ey) - Math.sin(sy) * Math.cos(ey) * Math.cos(ex - sx);
 
     let result = Math.atan2(y, x);
     result = toDegrees(result);
@@ -51,15 +51,15 @@ export const getStormCellMarker = (data: any): any => {
                 hidden: true,
                 shape: {
                     type: 'path',
-                    path: 'M 255 0 L 12 503 L 498 503 z',
+                    path: 'M51.9,49.1L30.4,11.8L9,49.1C9,49.1,51.9,49.1,51.9,49.1z',
                     fill: {
                         color: '#ffffff'
                     },
-                    transform: `rotate(${bearing},255,255)`
+                    transform: `rotate(${bearing},30,30)`
                 },
-                viewBox: '0 0 520 520'
+                viewBox: '0 0 60 60'
             },
-            size: [15, 15]
+            size: [16, 16]
         };
     }
 
