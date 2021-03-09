@@ -1,14 +1,13 @@
 import ModuleGroup from '@aerisweather/javascript-sdk/dist/modules/ModuleGroup';
-import  IMapSourceModule from '@aerisweather/javascript-sdk/dist/modules/interfaces/IMapSourceModule';
-import {loader as Warnings} from './warnings';
-import {loader as StormThreats} from './stormthreats';
-import {loader as LightningThreats} from './lightningthreats';
-import {loader as StormReports} from './stormreports';
-import {loader as StormCells} from './stormcells';
+import IMapSourceModule from '@aerisweather/javascript-sdk/dist/modules/interfaces/IMapSourceModule';
+import { loader as Warnings } from './warnings';
+import { loader as StormThreats } from './stormthreats';
+import { loader as LightningThreats } from './lightningthreats';
+import { loader as StormReports } from './stormreports';
+import { loader as StormCells } from './stormcells';
 
 class Severe extends ModuleGroup {
-
-    get id() {
+    get id(): string {
         return 'severe';
     }
 
@@ -19,7 +18,7 @@ class Severe extends ModuleGroup {
         const stormreports = await StormReports();
         const stormcells = await StormCells();
 
-        return new Promise<IMapSourceModule[]>((resolve, reject) => {
+        return new Promise<IMapSourceModule[]>((resolve) => {
             this._modules = [
                 warnings,
                 stormthreats,
@@ -37,7 +36,7 @@ class Severe extends ModuleGroup {
             buttons: [{
                 value: 'warnings',
                 title: 'Severe Warnings'
-            },{
+            }, {
                 value: 'stormcells',
                 title: 'Storm Tracks',
                 id: 'stormcells',
@@ -46,26 +45,26 @@ class Severe extends ModuleGroup {
                 segments: [{
                     value: 'all',
                     title: 'All'
-                },{
+                }, {
                     value: 'hail',
                     title: 'Hail'
-                },{
+                }, {
                     value: 'rotating',
                     title: 'Rotating'
-                },{
+                }, {
                     value: 'tornado',
                     title: 'Tornadic'
                 }]
-            },{
+            }, {
                 value: 'lightning-strikes-5m-icons',
                 title: 'Lightning Strikes'
-            },{
+            }, {
                 value: 'stormreports',
                 title: 'Severe Reports'
-            },{
+            }, {
                 value: 'stormthreats',
                 title: 'Threat Areas'
-            },{
+            }, {
                 value: 'lightningthreats',
                 title: 'Lightning Areas'
             }]

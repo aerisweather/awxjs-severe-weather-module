@@ -1,1 +1,3 @@
-export { default as Severe } from './Severe';
+import Severe from './Severe';
+
+export default Severe;

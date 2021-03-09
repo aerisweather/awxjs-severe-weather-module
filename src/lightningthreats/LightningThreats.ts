@@ -2,14 +2,13 @@ import MapSourceModule from '@aerisweather/javascript-sdk/dist/modules/MapSource
 import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
 
 class LightningThreats extends MapSourceModule {
-    private _request: ApiRequest;
+    private request: ApiRequest;
 
-    get id() {
+    get id(): string {
         return 'lightningthreats';
     }
 
     source(): any {
-
         const properties: any = {
             root: 'features',
             path: 'geometry'
@@ -19,23 +18,18 @@ class LightningThreats extends MapSourceModule {
             type: 'vector',
             requreBounds: true,
             data: {
-                service: () => this._request,
+                service: () => this.request,
                 properties
             },
             style: {
-                polygon: (item: any) => ({
+                polygon: () => ({
                     fill: {
                         color: '#FFDB00',
                         opacity: 0.6
                     }
-                    // stroke: {
-                    //     color: '#030303',
-                    //     width: 1,
-                    //     opacity: 0.8
-                    // }
                 })
             }
-        }
+        };
     }
 
     controls(): any {
@@ -46,13 +40,14 @@ class LightningThreats extends MapSourceModule {
     }
 
     onInit() {
-
-        const request = this.account.api()
+        const request = this.account
+            .api()
             .endpoint('lightning/summary')
             .format('geojson')
             .filter('threat,geo')
             .from('-15minutes');
-        this._request = request;
+        this.request = request;
     }
 }
+
 export default LightningThreats;

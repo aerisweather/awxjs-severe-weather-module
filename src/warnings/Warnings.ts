@@ -4,86 +4,88 @@ import * as utils from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 
 class Warnings extends MapSourceModule {
-	private _request: ApiRequest;
+    private request: ApiRequest;
 
-	get id() {
-	    return 'warnings';
-	}
+    get id(): string {
+        return 'warnings';
+    }
 
-	constructor(opts:any = null) {
-	    super(opts);
-	}
+    source(): any {
+        const properties: any = {
+            root: 'features',
+            id: 'properties.details.loc',
+            category: 'properties.details.cat',
+            path: 'geometry'
+        };
 
-	source(): any {
+        return {
+            type: 'vector',
+            data: {
+                service: () => this.request,
+                properties
+            },
+            style: {
+                polygon: (item: any) => ({
+                    fill: {
+                        color: `#${utils.get(item, 'properties.details.color')}`,
+                        opacity: 0.4,
+                        weight: 3
+                    },
+                    stroke: {
+                        color: `#${utils.get(item, 'properties.details.color')}`,
+                        width: 2,
+                        weight: 3
+                    }
+                })
+            }
+        };
+    }
 
-	    const properties: any = {
-	        root: 'features',
-	        id: 'properties.details.loc',
-	        category: 'properties.details.cat',
-	        path: 'geometry'
-	    };
+    controls(): any {
+        return {
+            value: this.id,
+            title: 'Warnings'
+        };
+    }
 
+    infopanel(): any {
+        return {
+            views: [{
+                data: (data: any) => data.alert.details,
+                renderer: (data: any) => {
+                    if (!data) {
+                        return;
+                    }
 
-	    return {
-	        type: 'vector',
-	        data: {
-	            service: () => this._request,
-	            properties
-	        },
-	        style: {
-	            polygon: (item: any) => ({
-	                fill: {
-	                    color: `#${  utils.get(item, 'properties.details.color')}`,
-	                    opacity: 0.4,
-	                    weight: 3
-	                },
-	                stroke: {
-	                    color: `#${  utils.get(item, 'properties.details.color')}`,
-	                    width: 2,
-	                    weight: 3
-	                }
-	            })
-	        }
-	    };
-	}
+                    return `<div class="alert">${(data.body || '').replace(/\n/g, '<br>')}</div>`;
+                }
+            }]
+        };
+    }
 
-	controls(): any {
-	    return {
-	        value: this.id,
-	        title: 'Warnings'
-	    };
-	}
+    onInit() {
+        const request = this.account.api()
+            .endpoint('advisories')
+            .action(ApiAction.SEARCH)
+            .filter('usa')
+            .query('type:TO.W;type:SV.W;type:FF.W;')
+            .fields('details.type,details.name,details.body,details,geoPoly')
+            .limit(100)
+            .format('geojson');
 
-	infopanel(): any {
-	    return {
-	        views: [{
-	            data: (data: any) => data.alert.details,
-	            renderer: (data: any) => {
-	                if (!data) return null;
-	                return `<div class="alert">${(data.body || '').replace(/\n/g, '<br>')}</div>`;
-	            }
-	        }]
-	    }
-	}
+        this.request = request;
+    }
 
-	onInit() {
-	    const request = this.account.api()
-	        .endpoint('advisories')
-	        .action(ApiAction.SEARCH)
-	        .filter('usa')
-	        .query('type:TO.W;type:SV.W;type:FF.W;')
-	        .fields('details.type,details.name,details.body,details,geoPoly')
-	        .limit(100)
-	        .format('geojson');
-	    this._request = request;
-	}
+    onShapeClick(shape: any, data: any) {
+        const source = data.awxjs_source;
+        const props = data.properties || {};
 
-	onShapeClick(shape: any, data: any) {
-	    const source = data.awxjs_source;
-	    const props = data.properties || {};
-	    if (source === 'warnings') {
-	        this.showInfoPanel(props.details.name).load( `${toName(props.details.name)}`, { alert: props });
-	    }
-	}
+        if (source === 'warnings') {
+            this.showInfoPanel(props.details.name).load(`${toName(props.details.name)}`, {
+                alert: props
+            });
+        }
+    }
 }
+
 export default Warnings;

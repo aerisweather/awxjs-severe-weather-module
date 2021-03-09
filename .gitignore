@@ -3,7 +3,10 @@
 .vscode
 
 /node_modules
-/yarn-error.log
-/public/dist
-/public/index.html
+/.env
+/.eslintcache
+/coverage
+/public
 /dist/index.html
+
+/yarn-error.log

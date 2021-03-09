@@ -1,9 +1,9 @@
 import MapSourceModule from '@aerisweather/javascript-sdk/dist/modules/MapSourceModule';
 import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
-import { formatDate, get, isset} from '@aerisweather/javascript-sdk/dist/utils/index';
+import { formatDate, get, isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import { formatDataValue } from '@aerisweather/javascript-sdk/dist/utils/units';
-import {formatStormCells, getStormCellMarker} from '../utils';
+import { formatStormCells, getStormCellMarker } from '../utils';
 
 const colors: any = {
     general: '#2ed300',
@@ -15,15 +15,24 @@ const colors: any = {
 const indexForIntensity = (value: number): any => {
     if (value >= 60) {
         return { index: 5, label: 'Extreme' };
-    } if (value >= 55) {
+    }
+
+    if (value >= 55) {
         return { index: 4, label: 'Very Heavy' };
-    } if (value >= 50) {
+    }
+
+    if (value >= 50) {
         return { index: 3, label: 'Heavy' };
-    } if (value >= 35) {
+    }
+
+    if (value >= 35) {
         return { index: 2, label: 'Moderate' };
-    } if (value >= 20) {
+    }
+
+    if (value >= 20) {
         return { index: 1, label: 'Light' };
     }
+
     return { index: 0, label: 'Very Light' };
 };
 
@@ -37,7 +46,9 @@ const indexForSeverity = (value: number): any => {
 };
 
 const getSeverity = (cell: any = {}): number => {
-    const { hail, tvs, traits } = cell;
+    const {
+        hail, tvs, traits
+    } = cell;
     let severity = 0;
 
     if (isset(hail) && hail.probSevere > 0) {
@@ -46,18 +57,18 @@ const getSeverity = (cell: any = {}): number => {
 
     if (isset(traits) && severity < 10) {
         const { rotating, tornado } = traits;
+
         if (rotating) {
             severity = 7;
         }
+
         if (tornado) {
             severity = 10;
         }
     }
 
-    if (severity < 8) {
-        if (tvs === 1) {
-            severity = 8;
-        }
+    if (severity < 8 && tvs === 1) {
+        severity = 8;
     }
 
     return severity;
@@ -65,17 +76,17 @@ const getSeverity = (cell: any = {}): number => {
 
 const getColor = (code: string): string => {
     code = (code || 'none').toLowerCase();
+
     return colors[code] || '#999999';
 };
 class StormCells extends MapSourceModule {
-    private _request: ApiRequest;
+    private request: ApiRequest;
 
     get id() {
         return 'stormcells';
     }
 
     source(): any {
-
         const properties: any = {
             id: 'id',
             path: 'points',
@@ -88,38 +99,40 @@ class StormCells extends MapSourceModule {
             type: 'vector',
             requiresBounds: true,
             data: {
-                service: () => this._request,
+                service: () => this.request,
                 properties,
                 formatter: (data: any) => formatStormCells(data)
             },
             style: {
                 marker: (data: any) => getStormCellMarker(data),
-                polyline: (data: any) => ({
+                polyline: () => ({
                     stroke: {
                         color: '#ffffff',
                         width: 3
                     }
                 })
             }
-        }
+        };
     }
 
     infopanel(): any {
         return {
             request: (data: any) => {
                 const locations = get(data, 'stormcells.forecast.locs') || [];
+
                 if (!locations || locations.length === 0) {
-                    return null;
+                    return;
                 }
 
                 const request = this.account.api();
                 locations.forEach(({ lat, long }: any) => {
-                    const req = this.account.api()
+                    const request_ = this.account
+                        .api()
                         .endpoint('places')
                         .place(`${lat},${long}`)
                         .radius('10mi')
                         .fields('place.name,place.state');
-                    request.addRequest(req);
+                    request.addRequest(request_);
                 });
 
                 return request;
@@ -128,52 +141,70 @@ class StormCells extends MapSourceModule {
                 // place info
                 requiresData: true,
                 data: (data: any): any => {
-                    if (!get(data, 'stormcells')) return null;
+                    if (!get(data, 'stormcells')) return;
+
                     return data;
                 },
                 renderer: (data: any): string => {
-                    if (!data) return null;
+                    if (!data) return;
 
-                    const { stormcells: { place, movement, traits = {} }, metric } = data;
+                    const {
+                        stormcells: {
+                            place, movement, traits = {}
+                        },
+                        metric
+                    } = data;
                     const placeName = `${toName(place.name)}, ${place.state.toUpperCase()}`;
 
                     const movementBlock = isset(movement) ? `
-						<div class="awxjs__ui-row">
-							<div>Moving ${movement.dirTo} at ${formatDataValue(movement, 'speedMPH', 'speedKMH', metric)}</div>
-						</div>
-					` : '';
+                            <div class="awxjs__ui-row">
+                                <div>
+                                    Moving ${movement.dirTo}
+                                    at ${formatDataValue(movement, 'speedMPH', 'speedKMH', metric)}
+                                </div>
+                            </div>
+                        ` : '';
 
-                    return (`
-						<div class="stormtrack-loc awxjs__app__ui-panel-info__table">
-							<div class="awxjs__ui-row">
-								<div class="awxjs__ui-cols align-center">
-									<div class="awxjs__ui-expand awxjs__text-lg value"><strong>Near ${placeName}</strong></div>
-									<div><div class="indicator" style="background:${getColor(traits.type)};"></div></div>
-								</div>
-							</div>
-							${movementBlock}
-						</div>
-					`);
+                    return `
+                        <div class="stormtrack-loc awxjs__app__ui-panel-info__table">
+                            <div class="awxjs__ui-row">
+                                <div class="awxjs__ui-cols align-center">
+                                    <div class="awxjs__ui-expand awxjs__text-lg value">
+                                        <strong>Near ${placeName}</strong>
+                                    </div>
+                                    <div>
+                                        <div class="indicator" style="background:${getColor(traits.type)};"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            ${movementBlock}
+                        </div>
+                    `;
                 }
             }, {
                 // severity levels
                 requiresData: true,
                 data: (data: any) => {
                     const stormcells = get(data, 'stormcells');
-                    if (!stormcells) return null;
+
+                    if (!stormcells) return;
 
                     const { dbzm } = stormcells;
                     const result: any[] = [];
 
                     if (isset(dbzm)) {
                         result.push({
-                            type: 'intensity', name: 'Intensity', value: dbzm
+                            type: 'intensity',
+                            name: 'Intensity',
+                            value: dbzm
                         });
                     }
 
                     const severity = getSeverity(data.stormcells);
                     result.push({
-                        type: 'severity', name: 'Severity', value: severity
+                        type: 'severity',
+                        name: 'Severity',
+                        value: severity
                     });
 
                     return result;
@@ -193,23 +224,36 @@ class StormCells extends MapSourceModule {
                             level = label;
                         }
 
-                        const indexStr = `${index}`.replace(/\./g, 'p');
+                        const indexString = `${index}`.replace(/\./g, 'p');
                         const percent = Math.round((index / 5) * 1000) / 10;
 
-                        return (`
-							<div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
-								<div class="awxjs__app__ui-panel-info__hazard-label">${hazard.name}</div>
-								<div class="awxjs__app__ui-panel-info__hazard-bar">
-									<div class="awxjs__app__ui-panel-info__hazard-bar-inner">
-										<div class="awxjs__app__ui-panel-info__hazard-bar-progress awxjs__app__ui-panel-info__hazard-indice-fill-${indexStr}" style="width:${percent}%;"></div>
-									</div>
-								</div>
-								<div class="awxjs__app__ui-panel-info__hazard-value awxjs__app__ui-panel-info__hazard-value-${indexStr}">${level}</div>
-							</div>
-						`);
+                        return `
+                            <div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
+                                <div class="awxjs__app__ui-panel-info__hazard-label">
+                                    ${hazard.name}
+                                </div>
+                                <div class="awxjs__app__ui-panel-info__hazard-bar">
+                                    <div class="awxjs__app__ui-panel-info__hazard-bar-inner">
+                                        <div
+                                            class="awxjs__app__ui-panel-info__hazard-bar-progress
+                                                awxjs__app__ui-panel-info__hazard-indice-fill-${indexString}"
+                                            style="width:${percent}%;"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="awxjs__app__ui-panel-info__hazard-value
+                                        awxjs__app__ui-panel-info__hazard-value-${indexString}"
+                                    >${level}</div>
+                            </div>
+                        `;
                     });
 
-                    return `<div class="awxjs__app__ui-panel-info__hazards">${hazards.join('')}</div>`;
+                    return `
+                        <div class="awxjs__app__ui-panel-info__hazards">
+                            ${hazards.join('')}
+                        </div>
+                    `;
                 }
             }, {
                 // forecast track
@@ -217,20 +261,24 @@ class StormCells extends MapSourceModule {
                 requiresData: true,
                 data: (data: any) => {
                     const locations = get(data, 'stormcells.forecast.locs');
-                    if (!locations) return null;
+
+                    if (!locations) return;
 
                     // filter out invalid place results
-                    const places = locations.map((loc: any) => {
-                        const key = `places_${loc.lat}_${loc.long}`;
-                        const place: any = data[key];
+                    const places = locations
+                        .map((loc: any) => {
+                            const key = `places_${loc.lat}_${loc.long}`;
+                            const place: any = data[key];
 
-                        if (place && isset(place.place)) {
-                            return { timestamp: loc.timestamp, ...place };
-                        }
-                        return null;
-                    }).filter((v: any) => isset(v));
+                            if (place && isset(place.place)) {
+                                return { timestamp: loc.timestamp, ...place };
+                            }
 
-                    if (places.length === 0) return null;
+                            return false;
+                        })
+                        .filter((v: any) => v);
+
+                    if (places.length === 0) return;
 
                     data.locations = places;
 
@@ -240,55 +288,70 @@ class StormCells extends MapSourceModule {
                     const locations = get(data, 'locations') || [];
                     const names: string[] = [];
                     const rows = locations.map((loc: any) => {
-                        const place = loc.place;
-                        if (names.indexOf(place.name) !== -1) {
-                            return null;
+                        const { place, timestamp } = loc;
+
+                        if (names.includes(place.name)) {
+                            return;
                         }
                         names.push(place.name);
 
-                        const time = formatDate(new Date(loc.timestamp * 1000), 'h:mm a');
-                        return (`
-							<div class="awxjs__ui-row">
-								<div class="awxjs__ui-expand label">${place.name}</div>
-								<div class="awxjs__ui-expand value">${time}</div>
-							</div>
-						`);
+                        const time = formatDate(new Date(timestamp * 1000), 'h:mm a');
+
+                        return `
+                            <div class="awxjs__ui-row">
+                                <div class="awxjs__ui-expand label">${place.name}</div>
+                                <div class="awxjs__ui-expand value">${time}</div>
+                            </div>
+                        `;
                     });
 
-                    return (`
-						<div class="awxjs__app__ui-panel-info__table">
-							${rows.filter((v: any) => typeof v !== 'undefined').join('\n')}
-						</div>
-					`);
+                    return `
+                        <div class="awxjs__app__ui-panel-info__table">
+                            ${rows.filter((v: any) => typeof v !== 'undefined').join('\n')}
+                        </div>
+                    `;
                 }
             }, {
                 // details
                 requiresData: true,
                 data: (data: any) => {
                     const payload = get(data, 'stormcells');
+
                     if (!payload) {
-                        return null;
+                        return;
                     }
+
                     return payload;
                 },
                 renderer: (data: any) => {
-                    const { metric } = data;
+                    const {
+                        metric,
+                        timestamp,
+                        radarID,
+                        dbzm,
+                        tvs,
+                        mda,
+                        vil
+                    } = data;
 
                     const rows: any[] = [{
                         label: 'Observed',
-                        value: formatDate(new Date(data.timestamp * 1000), 'h:mm a, MMM d, yyyy')
+                        value: formatDate(
+                            new Date(timestamp * 1000),
+                            'h:mm a, MMM d, yyyy'
+                        )
                     }, {
                         label: 'Radar Station',
-                        value: data.radarID
+                        value: radarID
                     }, {
                         label: 'Max Reflectivity',
-                        value: `${data.dbzm} dbz`
+                        value: `${dbzm} dbz`
                     }, {
                         label: 'Echo Top',
                         value: formatDataValue(data, 'htFT', 'htM', metric)
                     }, {
                         label: 'TVS',
-                        value: data.tvs === 1 ? 'Yes' : 'No'
+                        value: tvs === 1 ? 'Yes' : 'No'
                     }, {
                         label: 'Hail',
                         value: `${get(data, 'hail.prob') || 0}% Probability`
@@ -300,28 +363,31 @@ class StormCells extends MapSourceModule {
                         value: formatDataValue(data, 'hail.maxSizeIN', 'hail.maxSizeCM', metric)
                     }, {
                         label: 'MDA',
-                        value: data.mda
+                        value: mda
                     }, {
                         label: 'VIL',
-                        value: data.vil
+                        value: vil
                     }];
 
-                    return (`
-						<div class="awxjs__app__ui-panel-info__table">
-							${rows.reduce((result, row) => {
-                            result.push(`
-									<div class="awxjs__ui-row">
-										<div class="awxjs__ui-expand label">${row.label}</div>
-										<div class="awxjs__ui-expand value">${row.value}</div>
-									</div>
-								`);
-                            return result;
-                        }, []).join('\n')}
-						</div>
-					`);
+                    const content = rows.reduce((result, row) => {
+                        result.push(`
+                            <div class="awxjs__ui-row">
+                                <div class="awxjs__ui-expand label">${row.label}</div>
+                                <div class="awxjs__ui-expand value">${row.value}</div>
+                            </div>
+                        `);
+
+                        return result;
+                    }, []).join('\n');
+
+                    return `
+                        <div class="awxjs__app__ui-panel-info__table">
+                            ${content}
+                        </div>
+                    `;
                 }
             }]
-        }
+        };
     }
 
     controls(): any {
@@ -332,16 +398,17 @@ class StormCells extends MapSourceModule {
     }
 
     onInit() {
-        const request = this.account.api()
-            .endpoint('stormcells');
-        this._request = request;
+        const request = this.account.api().endpoint('stormcells');
+        this.request = request;
     }
 
     onMarkerClick(marker: any, data: any) {
         if (!data) return;
 
-        const { id } = data;
-        const cellId = `${data.radarID}_${data.cellID}`;
+        const {
+            id, radarID, cellID
+        } = data;
+        const cellId = `${radarID}_${cellID}`;
         this.showInfoPanel(`Cell ${cellId}`).load({ p: id }, { stormcells: data });
     }
 }
