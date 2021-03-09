@@ -12,7 +12,7 @@
         "build:dev": "webpack",
         "build:prod": "NODE_ENV='production' webpack -p --env production",
         "build": "yarn build:js; yarn build:prod; rm dist/index.html",
-        "publish": "yarn build:js; npm publish",
+        "push": "yarn build:prod; git add .; git commit -m 'build: latest compiled code'; git push",
         "dev-server": "yarn develop",
         "lint": "eslint 'src/**/*.{js,ts,tsx}'",
         "lint:fix": "yarn lint -- --fix"
