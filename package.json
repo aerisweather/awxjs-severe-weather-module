@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "author": "Ben Collin",
-    "homepage": "",
+    "homepage": "https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/",
     "license": "MIT",
     "scripts": {
         "develop": "NODE_ENV='development' webpack-dev-server",
@@ -12,7 +12,7 @@
         "build:dev": "webpack",
         "build:prod": "NODE_ENV='production' webpack -p --env production",
         "build": "yarn build:js; yarn build:prod; rm dist/index.html",
-        "push": "yarn build:prod; git add .; git commit -m 'build: latest compiled code'; git push",
+        "push": "yarn build; git add .; git commit -m 'build: latest compiled code'; git push",
         "dev-server": "yarn develop",
         "lint": "eslint 'src/**/*.{js,ts,tsx}'",
         "lint:fix": "yarn lint -- --fix"

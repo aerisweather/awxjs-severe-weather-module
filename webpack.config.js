@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const dotenv = require('dotenv');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TerserPlugin = require('terser-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
@@ -28,7 +27,6 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 
 const getPlugins = () => {
     let plugins = [
-        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             inject: true,
             title: 'Aeris JS - Map Module',

@@ -39,7 +39,7 @@ app.on('ready', () => {
 
 To start using our Severe module quickly and easily, just load our precompiled script into your HTML and add it to your maps:
 
-[awxjs-severe-weather.min.js](https://cdn.aerisapi.com/sdk/js/modules/awxjs-severe-weather.min.js)
+[awxjs-severe-weather.min.js](https://cdn.aerisapi.com/sdk/js/modules/severe/latest/awxjs-severe-weather.min.js)
 
 ```html
 <!DOCTYPE html>
@@ -86,7 +86,7 @@ window.addEventListener('load', () => {
 </script>
 
 <script src="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.min.js"></script>
-<script src="https://cdn.aerisapi.com/sdk/js/modules/awxjs-severe-weather.min.js"></script>
+<script src="https://cdn.aerisapi.com/sdk/js/modules/severe/latest/awxjs-severe-weather.min.js"></script>
 
 </body>
 </html>
