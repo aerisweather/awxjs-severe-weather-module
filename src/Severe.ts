@@ -1,10 +1,10 @@
 import ModuleGroup from '@aerisweather/javascript-sdk/dist/modules/ModuleGroup';
 import IMapSourceModule from '@aerisweather/javascript-sdk/dist/modules/interfaces/IMapSourceModule';
-import { loader as Warnings } from './warnings';
-import { loader as StormThreats } from './stormthreats';
-import { loader as LightningThreats } from './lightningthreats';
-import { loader as StormReports } from './stormreports';
-import { loader as StormCells } from './stormcells';
+import Warnings from './warnings/Warnings';
+import StormThreats from './stormthreats/StormThreats';
+import LightningThreats from './lightningthreats/LightningThreats';
+import StormReports from './stormreports/StormReports';
+import StormCells from './stormcells/StormCells';
 
 class Severe extends ModuleGroup {
     get id(): string {
@@ -12,20 +12,14 @@ class Severe extends ModuleGroup {
     }
 
     async load(): Promise<IMapSourceModule[]> {
-        const warnings = await Warnings();
-        const stormthreats = await StormThreats();
-        const lightningthreats = await LightningThreats();
-        const stormreports = await StormReports();
-        const stormcells = await StormCells();
-
         return new Promise<IMapSourceModule[]>((resolve) => {
             this._modules = [
-                warnings,
-                stormthreats,
-                lightningthreats,
-                stormreports,
-                stormcells
-            ].map((Module) => new Module.default()); // eslint-disable-line new-cap
+                new Warnings(),
+                new StormThreats(),
+                new LightningThreats(),
+                new StormReports(),
+                new StormCells()
+            ];
             resolve(this._modules);
         });
     }

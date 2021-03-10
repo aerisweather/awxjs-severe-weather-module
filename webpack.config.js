@@ -1,12 +1,13 @@
 const path = require('path');
 const webpack = require('webpack');
 const dotenv = require('dotenv');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 const PACKAGE = require('./package.json');
+
 const MODULE_NAME = PACKAGE.moduleName || 'SampleModule';
 const IS_PROD = process.env.NODE_ENV === 'production';
 
@@ -17,16 +18,22 @@ License: ${PACKAGE.license}
 ${PACKAGE.homepage}
 `;
 
+let deployPath = process.env.PUBLIC_PATH ? process.env.PUBLIC_PATH : null;
+if (deployPath) {
+    deployPath = deployPath.replace(/\{\{version\}\}/, PACKAGE.version);
+}
+
 // setup environment configuration
 const env = dotenv.config().parsed;
 env.NODE_ENV = JSON.stringify('production');
 const envKeys = Object.keys(env).reduce((prev, next) => {
     prev[`process.env.${next}`] = JSON.stringify(env[next]);
+
     return prev;
 }, {});
 
 const getPlugins = () => {
-    let plugins = [
+    const plugins = [
         new HtmlWebpackPlugin({
             inject: true,
             title: 'Aeris JS - Map Module',
@@ -43,11 +50,11 @@ const getPlugins = () => {
     ];
 
     if (IS_PROD) {
-        plugins.push(new webpack.DefinePlugin(envKeys));
-        plugins.push(new webpack.HashedModuleIdsPlugin());
         plugins.push(
+            new webpack.DefinePlugin(envKeys),
+            new webpack.HashedModuleIdsPlugin(),
             new webpack.BannerPlugin({
-                banner: banner
+                banner
             })
         );
     } else {
@@ -59,12 +66,13 @@ const getPlugins = () => {
 
 module.exports = () => {
     const outputFileName = PACKAGE.name.replace(/-module$/, '');
+
     return {
         mode: IS_PROD ? 'production' : 'development',
         entry: './src/index.ts',
         output: {
             path: path.join(__dirname, 'dist'),
-            publicPath: './dist/',
+            publicPath: deployPath || './dist/',
             filename: IS_PROD ? `${outputFileName}.min.js` : `${outputFileName}.js`,
             chunkFilename: '[name].js',
             library: [MODULE_NAME],
@@ -98,6 +106,7 @@ module.exports = () => {
             ]
         },
         optimization: {
+            sideEffects: false,
             minimizer: [
                 new TerserPlugin({
                     extractComments: false,
@@ -108,9 +117,11 @@ module.exports = () => {
                 automaticNameDelimiter: '-',
                 name(module, chunks, cacheGroupKey) {
                     let chunkName = chunks.map((chunk) => chunk.name).join('-');
-                    if (/aerisweather\.modules\.severe/.test(chunkName) === true) {
+
+                    if (chunkName.includes('-') && /aerisweather\.modules\.severe/.test(chunkName) === true) {
                         chunkName = 'aerisweather.modules.severe.common';
                     }
+
                     return chunkName;
                 }
             },
