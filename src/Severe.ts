@@ -15,53 +15,27 @@ class Severe extends ModuleGroup {
         return new Promise<IMapSourceModule[]>((resolve) => {
             this._modules = [
                 new Warnings(),
-                new StormThreats(),
-                new LightningThreats(),
+                new StormCells(),
                 new StormReports(),
-                new StormCells()
+                new StormThreats(),
+                new LightningThreats()
             ];
             resolve(this._modules);
         });
     }
 
-    controls() {
+    controls(): any {
+        const buttons = this.modules ? this.modules.map((m) => m.controls()) : [];
+
+        // insert raster lightning strikes control in third position
+        buttons.splice(2, 0, {
+            value: 'lightning-strikes-5m-icons',
+            title: 'Lightning Strikes'
+        });
+
         return {
             title: 'Severe Weather',
-            buttons: [{
-                value: 'warnings',
-                title: 'Severe Warnings'
-            }, {
-                value: 'stormcells',
-                title: 'Storm Tracks',
-                id: 'stormcells',
-                filter: true,
-                multiselect: true,
-                segments: [{
-                    value: 'all',
-                    title: 'All'
-                }, {
-                    value: 'hail',
-                    title: 'Hail'
-                }, {
-                    value: 'rotating',
-                    title: 'Rotating'
-                }, {
-                    value: 'tornado',
-                    title: 'Tornadic'
-                }]
-            }, {
-                value: 'lightning-strikes-5m-icons',
-                title: 'Lightning Strikes'
-            }, {
-                value: 'stormreports',
-                title: 'Severe Reports'
-            }, {
-                value: 'stormthreats',
-                title: 'Threat Areas'
-            }, {
-                value: 'lightningthreats',
-                title: 'Lightning Areas'
-            }]
+            buttons
         };
     }
 }

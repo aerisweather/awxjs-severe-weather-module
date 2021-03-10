@@ -393,7 +393,22 @@ class StormCells extends MapSourceModule {
     controls(): any {
         return {
             value: this.id,
-            title: 'Storm Cells'
+            title: 'Storm Tracks',
+            filter: true,
+            multiselect: true,
+            segments: [{
+                value: 'all',
+                title: 'All'
+            }, {
+                value: 'hail',
+                title: 'Hail'
+            }, {
+                value: 'rotating',
+                title: 'Rotating'
+            }, {
+                value: 'tornado',
+                title: 'Tornadic'
+            }]
         };
     }
 

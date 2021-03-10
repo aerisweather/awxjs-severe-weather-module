@@ -76,6 +76,13 @@ class StormReports extends MapSourceModule {
         };
     }
 
+    controls(): any {
+        return {
+            value: this.id,
+            title: 'Storm Reports'
+        };
+    }
+
     infopanel(): any {
         return {
             views: [{
@@ -139,13 +146,6 @@ class StormReports extends MapSourceModule {
         const { id, report } = data;
         const type = ucwords(report.type);
         this.showInfoPanel(`${type}`).load({ p: id }, { stormreports: data });
-    }
-
-    controls(): any {
-        return {
-            value: this.id,
-            title: 'Storm Reports'
-        };
     }
 
     onInit() {
