@@ -5,7 +5,7 @@ Starting with version 1.3.0 of the [Aeris Javascript SDK](https://www.aerisweath
 
 We've created this Severe module as an example for you to reference when creating your own custom modules for your mapping applications. Feel free to use this module in your own projects, whether you're using our [precompiled SDK scripts](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/getting-started/script-usage/) or [importing our NPM package](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/getting-started/module-usage/) into your Javascript projects.
 
-![AerisWeather JS - Observations Module](docs/img/screenshot2.png)
+![AerisWeather JS - Severe Module](docs/img/example1.png)
 
 ## Using the Module
 
