@@ -379,7 +379,7 @@ function (_super) {
             value: dbzm + " dbz"
           }, {
             label: 'Echo Top',
-            value: (0, _units.formatDataValue)(data, 'htFT', 'htM', metric)
+            value: (0, _units.formatDataValue)(data, 'topFT', 'topM', metric)
           }, {
             label: 'TVS',
             value: tvs === 1 ? 'Yes' : 'No'

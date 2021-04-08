@@ -348,7 +348,7 @@ class StormCells extends MapSourceModule {
                         value: `${dbzm} dbz`
                     }, {
                         label: 'Echo Top',
-                        value: formatDataValue(data, 'htFT', 'htM', metric)
+                        value: formatDataValue(data, 'topFT', 'topM', metric)
                     }, {
                         label: 'TVS',
                         value: tvs === 1 ? 'Yes' : 'No'
