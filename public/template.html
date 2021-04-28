@@ -40,8 +40,8 @@ window.addEventListener('load', () => {
                     zoom: 7
                 },
                 center: {
-                        lat: 44.694795764697896,
-                        lon: -93.328857
+                        lat: 26.694795764697896,
+                        lon: -83.328857
                 },
                 refresh: 120
             },
@@ -70,10 +70,13 @@ window.addEventListener('load', () => {
                 }
             }
         });
-
+        app.map.on('click', (e) => {
+                    app.showInfoAtCoord(e.data.coord, 'localweather', 'Local Weather');
+        });
         // Add an instance of your module to the map application
-        app.modules.add(new Severe());
-
+         app.modules.add(new Severe( {showThreats: true}));
+        //app.modules.add(new Severe());
+        
     });
 
 });

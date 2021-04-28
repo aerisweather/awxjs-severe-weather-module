@@ -34,7 +34,7 @@
         "README.md"
     ],
     "dependencies": {
-        "@aerisweather/javascript-sdk": "^1.4.0"
+        "@aerisweather/javascript-sdk": "^1.4.2"
     },
     "devDependencies": {
         "@aerisweather/eslint-plugin": "^1.0.0",

@@ -3,37 +3,13 @@ import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest
 import { formatDate, get, isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import { formatDataValue } from '@aerisweather/javascript-sdk/dist/utils/units';
-import { formatStormCells, getStormCellMarker } from '../utils';
+import { formatStormCells, getStormCellMarker, indexForIntensity} from '../utils';
 
 const colors: any = {
     general: '#2ed300',
     hail: '#ebe100',
     rotating: '#f17200',
     tornado: '#ff2600'
-};
-
-const indexForIntensity = (value: number): any => {
-    if (value >= 60) {
-        return { index: 5, label: 'Extreme' };
-    }
-
-    if (value >= 55) {
-        return { index: 4, label: 'Very Heavy' };
-    }
-
-    if (value >= 50) {
-        return { index: 3, label: 'Heavy' };
-    }
-
-    if (value >= 35) {
-        return { index: 2, label: 'Moderate' };
-    }
-
-    if (value >= 20) {
-        return { index: 1, label: 'Light' };
-    }
-
-    return { index: 0, label: 'Very Light' };
 };
 
 const indexForSeverity = (value: number): any => {
@@ -186,7 +162,7 @@ class StormCells extends MapSourceModule {
                 requiresData: true,
                 data: (data: any) => {
                     const stormcells = get(data, 'stormcells');
-
+console.log(stormcells);
                     if (!stormcells) return;
 
                     const { dbzm } = stormcells;
@@ -223,10 +199,12 @@ class StormCells extends MapSourceModule {
                             index = hazardIndex;
                             level = label;
                         }
+console.log(index);
 
                         const indexString = `${index}`.replace(/\./g, 'p');
-                        const percent = Math.round((index / 5) * 1000) / 10;
 
+                        const percent = Math.round((index / 5) * 1000) / 10;
+                        console.log(indexString, level, percent);
                         return `
                             <div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
                                 <div class="awxjs__app__ui-panel-info__hazard-label">
