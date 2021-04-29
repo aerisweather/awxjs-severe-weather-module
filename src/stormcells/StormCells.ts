@@ -162,7 +162,6 @@ class StormCells extends MapSourceModule {
                 requiresData: true,
                 data: (data: any) => {
                     const stormcells = get(data, 'stormcells');
-console.log(stormcells);
                     if (!stormcells) return;
 
                     const { dbzm } = stormcells;
@@ -199,12 +198,10 @@ console.log(stormcells);
                             index = hazardIndex;
                             level = label;
                         }
-console.log(index);
 
                         const indexString = `${index}`.replace(/\./g, 'p');
 
                         const percent = Math.round((index / 5) * 1000) / 10;
-                        console.log(indexString, level, percent);
                         return `
                             <div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
                                 <div class="awxjs__app__ui-panel-info__hazard-label">

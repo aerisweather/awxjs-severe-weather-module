@@ -112,24 +112,44 @@ export const rotationIntensity = (value: number): any => {
 }
 //pulled from https://www.weather.gov/lwx/skywarn_hail
 export const indexForHail = (value: number): any => {
+    if (value >= 4.5) {
+        return {index: 5, label: 'Softball Size'}
+    }
+    if (value >= 4.0) {
+        return {index: 5, label: 'Grapefruit Size'}
+    }
+    if (value >= 3.0) {
+        return {index: 5, label: 'Teacup Size'}
+    }
     if (value >= 2.75) {
         return {index: 5, label: 'Baseball Size'}
     }
-
+    if (value >= 2.5) {
+        return {index: 5, label: 'Tennis Ball Size'}
+    }
+    if (value >= 2.0) {
+        return {index: 4, label: 'Hen Egg Size'}
+    }
     if (value >= 1.75) {
         return {index: 4, label: 'Golf Ball Size'}
     }
-
+    if (value >= 1.50) {
+        return {index: 4, label: 'Ping Pong Size'}
+    }
+    if (value >= 1.25) {
+        return {index: 3, label: 'Half Dollar Size'}
+    }
     if (value >= 1.00) {
         return {index: 3, label: 'Quarter Size'}
     }
-
     if (value >= 0.75) {
         return {index: 2, label: 'Penny Size'}
     }
-
+    if (value >= 0.5) {
+        return {index: 1, label: 'Small Marble Size'}
+    }
     if (value >= 0.25) {
-        return {index: 1, label: 'Marble Size'}
+        return {index: 1, label: 'Pea Size'}
     }
 
     return { index: 0, label: 'None'};

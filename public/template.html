@@ -19,8 +19,8 @@
     }
     </style>
 
-    <script src="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.css">
+    <script src="https://cdn.aerisapi.com/sdk/js/1.5.0/aerisweather.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/1.5.0/aerisweather.css">
 
 </head>
 <body>
@@ -37,11 +37,11 @@ window.addEventListener('load', () => {
         const app = new apps.InteractiveMapApp('#app', {
             map: {
                 map: {
-                    zoom: 7
+                    zoom: 6
                 },
                 center: {
-                        lat: 26.694795764697896,
-                        lon: -83.328857
+                        lat: 36.694795764697896,
+                        lon: -90.328857
                 },
                 refresh: 120
             },
@@ -49,6 +49,7 @@ window.addEventListener('load', () => {
                 layers: {
                     buttons: [{    
                         value: 'radar',
+                        id: 'radar',
                         title: 'Radar',
                         controls: {
                             settings: [{
@@ -68,6 +69,12 @@ window.addEventListener('load', () => {
                 }
             ]
                 }
+            }
+        });
+        app.on('ready', () => {
+            const layers = app.getPanel("layers");
+            if (layers) {
+                layers.select(['radar']);
             }
         });
         app.map.on('click', (e) => {
