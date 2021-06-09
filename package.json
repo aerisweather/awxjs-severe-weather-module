@@ -37,7 +37,7 @@
         "@aerisweather/javascript-sdk": "^1.4.0"
     },
     "devDependencies": {
-        "@aerisweather/eslint-plugin": "^1.0.0",
+        "@aerisweather/eslint-plugin": "^1.0.1",
         "@babel/cli": "^7.8.4",
         "@babel/core": "^7.8.7",
         "@babel/plugin-proposal-class-properties": "^7.5.5",

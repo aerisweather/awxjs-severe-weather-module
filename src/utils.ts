@@ -1,10 +1,4 @@
-import {
-isEmpty,
-    formatDate,
-    isArray,
-    get,
-    isset
-} from '@aerisweather/javascript-sdk/dist/utils/index';
+import { isEmpty, formatDate, isArray, get, isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 import * as strings from '@aerisweather/javascript-sdk/dist/utils/strings';
 
 const toRadians = (degrees: any) => (degrees * Math.PI) / 180;
@@ -82,7 +76,9 @@ export const indexForSeverity = (value: number): any => {
 
 export const getSeverity = (cell: any = {}): number => {
     const {
-        hail, tvs, traits
+        hail,
+        tvs,
+        traits
     } = cell;
     let severity = 0;
 

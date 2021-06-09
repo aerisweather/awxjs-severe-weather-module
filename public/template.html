@@ -1,83 +1,92 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width, user-scalable=no">
-	<title>Aeris JS - Severe Module</title>
 
-	<style>
-	html, body {
-		height: 100%;
-		margin: 0;
-		padding: 0;
-		width: 100%;
-	}
-    #app {
-        height: 100%;
-        width: 100%;
-    }
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>Aeris JS - Severe Module</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
     </style>
 
-    <script src="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.css">
+    <script defer src="https://cdn.aerisapi.com/sdk/js/1.5.1/aerisweather.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.aerisapi.com/sdk/js/1.5.1/aerisweather.css">
 
 </head>
+
 <body>
 
     <div id="app"></div>
 
-<script>
-window.addEventListener('load', () => {
+    <script>
+        window.addEventListener('load', () => {
 
-    // Update with your Aeris account access keys
-    const aeris = new AerisWeather('<%= htmlWebpackPlugin.options.aeris.clientId %>', '<%= htmlWebpackPlugin.options.aeris.clientSecret %>');
+            // Update with your Aeris account access keys
+            const aeris = new AerisWeather(
+                '<%= htmlWebpackPlugin.options.aeris.clientId %>',
+                '<%= htmlWebpackPlugin.options.aeris.clientSecret %>');
 
-    aeris.apps().then((apps) => {
-        const app = new apps.InteractiveMapApp('#app', {
-            map: {
-                map: {
-                    zoom: 7
-                },
-                center: {
-                        lat: 44.694795764697896,
-                        lon: -93.328857
-                },
-                refresh: 120
-            },
-            panels: {
-                layers: {
-                    buttons: [{    
-                        value: 'radar',
-                        title: 'Radar',
-                        controls: {
-                            settings: [{
-                                type: 'opacity'
-                            }]
-                        }   
-                    },{
-                        value: 'convective',
-                        title: 'Convective Outlook'
+            aeris.apps().then((apps) => {
+                const app = new apps.InteractiveMapApp('#app', {
+                    map: {
+                        map: {
+                            zoom: 7
+                        },
+                        center: {
+                            lat: 44.694795764697896,
+                            lon: -93.328857
+                        },
+                        refresh: 120
                     },
-                {
-                    title: "Geocolor",
-                                value: "satellite-geocolor,states-outlines-dk"
-                },{
-                    title: "Infrared",
-                                value: "satellite:75"
-                }
-            ]
-                }
-            }
+                    panels: {
+                        layers: {
+                            buttons: [{
+                                    value: 'radar',
+                                    title: 'Radar',
+                                    controls: {
+                                        settings: [{
+                                            type: 'opacity'
+                                        }]
+                                    }
+                                }, {
+                                    value: 'convective',
+                                    title: 'Convective Outlook'
+                                },
+                                {
+                                    title: "Geocolor",
+                                    value: "satellite-geocolor,states-outlines-dk"
+                                }, {
+                                    title: "Infrared",
+                                    value: "satellite:75"
+                                }
+                            ]
+                        }
+                    }
+                });
+
+                // Add an instance of your module to the map application
+                app.modules.add(new Severe());
+
+            });
+
         });
 
-        // Add an instance of your module to the map application
-        app.modules.add(new Severe());
-
-    });
-
-});
-</script>
+    </script>
 
 </body>
+
 </html>

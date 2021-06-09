@@ -3,14 +3,12 @@ import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest
 import { formatDate, get, isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import { formatDataValue } from '@aerisweather/javascript-sdk/dist/utils/units';
-import {
-colorStormCell,
+import { colorStormCell,
     formatStormCells,
     getSeverity,
     getStormCellMarker,
     indexForIntensity,
-    indexForSeverity
-} from '../utils';
+    indexForSeverity } from '../utils';
 
 class StormCells extends MapSourceModule {
     private request: ApiRequest;
@@ -357,7 +355,9 @@ class StormCells extends MapSourceModule {
         if (!data) return;
 
         const {
-            id, radarID, cellID
+            id,
+            radarID,
+            cellID
         } = data;
         const cellId = `${radarID}_${cellID}`;
         this.showInfoPanel(`Cell ${cellId}`).load({ p: id }, { stormcells: data });
