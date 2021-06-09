@@ -1,4 +1,10 @@
-import { isEmpty, formatDate, isArray, get } from '@aerisweather/javascript-sdk/dist/utils/index';
+import {
+isEmpty,
+    formatDate,
+    isArray,
+    get,
+    isset
+} from '@aerisweather/javascript-sdk/dist/utils/index';
 import * as strings from '@aerisweather/javascript-sdk/dist/utils/strings';
 
 const toRadians = (degrees: any) => (degrees * Math.PI) / 180;
@@ -20,21 +26,87 @@ const getBearing = (startLat: any, startLng: any, endLat: any, endLng: any) => {
     return (result + 360) % 360;
 };
 
-const colorStormCell = (code: string): string => {
+/**
+ * Storm Cells
+ */
+
+export const colorStormCell = (code: string): string => {
     code = code.toLowerCase();
 
     switch (code) {
         case 'general':
-            return '#2ED300';
+            return '#2ed300';
         case 'hail':
-            return '#EBE100';
+            return '#ebe100';
         case 'rotating':
-            return '#F17200';
+            return '#f17200';
         case 'tornado':
-            return '#FF2600';
+            return '#ff2600';
         default:
             return '#000000';
     }
+};
+
+export const indexForIntensity = (value: number): any => {
+    if (value >= 60) {
+        return { index: 5, label: 'Extreme' };
+    }
+
+    if (value >= 55) {
+        return { index: 4, label: 'Very Heavy' };
+    }
+
+    if (value >= 50) {
+        return { index: 3, label: 'Heavy' };
+    }
+
+    if (value >= 35) {
+        return { index: 2, label: 'Moderate' };
+    }
+
+    if (value >= 20) {
+        return { index: 1, label: 'Light' };
+    }
+
+    return { index: 0, label: 'Very Light' };
+};
+
+export const indexForSeverity = (value: number): any => {
+    // `value` is in the range 0..10 and needs to be converted to an index value in
+    // the range 0..5
+    const index = Math.floor(value / 2);
+    const labels = ['None', 'Minimal', 'Low', 'Moderate', 'High', 'Extreme'];
+
+    return { index, label: labels[index] };
+};
+
+export const getSeverity = (cell: any = {}): number => {
+    const {
+        hail, tvs, traits
+    } = cell;
+    let severity = 0;
+
+    if (isset(hail) && hail.probSevere > 0) {
+        severity = hail.probSevere / 10;
+    }
+
+    if (isset(traits) && severity < 10) {
+        const { rotating, tornado } = traits;
+
+        if (rotating) {
+            severity = 7;
+        }
+
+        if (tornado) {
+            severity = 10;
+        }
+    }
+
+    if (severity < 8 && tvs === 1) {
+        severity = 8;
+    }
+
+    return severity;
 };
 
 export const getStormCellMarker = (data: any): any => {
@@ -179,6 +251,10 @@ export const getStormCellForecast = (aeris: any, forecast: any) => {
 
     return final;
 };
+
+/**
+ * Storm Reports
+ */
 
 export const getMagnitude = (data: any = {}) => {
     let magnitude = '';

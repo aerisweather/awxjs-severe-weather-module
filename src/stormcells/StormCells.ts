@@ -3,82 +3,15 @@ import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest
 import { formatDate, get, isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import { formatDataValue } from '@aerisweather/javascript-sdk/dist/utils/units';
-import { formatStormCells, getStormCellMarker } from '../utils';
+import {
+colorStormCell,
+    formatStormCells,
+    getSeverity,
+    getStormCellMarker,
+    indexForIntensity,
+    indexForSeverity
+} from '../utils';
 
-const colors: any = {
-    general: '#2ed300',
-    hail: '#ebe100',
-    rotating: '#f17200',
-    tornado: '#ff2600'
-};
-
-const indexForIntensity = (value: number): any => {
-    if (value >= 60) {
-        return { index: 5, label: 'Extreme' };
-    }
-
-    if (value >= 55) {
-        return { index: 4, label: 'Very Heavy' };
-    }
-
-    if (value >= 50) {
-        return { index: 3, label: 'Heavy' };
-    }
-
-    if (value >= 35) {
-        return { index: 2, label: 'Moderate' };
-    }
-
-    if (value >= 20) {
-        return { index: 1, label: 'Light' };
-    }
-
-    return { index: 0, label: 'Very Light' };
-};
-
-const indexForSeverity = (value: number): any => {
-    // `value` is in the range 0..10 and needs to be converted to an index value in
-    // the range 0..5
-    const index = Math.floor(value / 2);
-    const labels = ['None', 'Minimal', 'Low', 'Moderate', 'High', 'Extreme'];
-
-    return { index, label: labels[index] };
-};
-
-const getSeverity = (cell: any = {}): number => {
-    const {
-        hail, tvs, traits
-    } = cell;
-    let severity = 0;
-
-    if (isset(hail) && hail.probSevere > 0) {
-        severity = hail.probSevere / 10;
-    }
-
-    if (isset(traits) && severity < 10) {
-        const { rotating, tornado } = traits;
-
-        if (rotating) {
-            severity = 7;
-        }
-
-        if (tornado) {
-            severity = 10;
-        }
-    }
-
-    if (severity < 8 && tvs === 1) {
-        severity = 8;
-    }
-
-    return severity;
-};
-
-const getColor = (code: string): string => {
-    code = (code || 'none').toLowerCase();
-
-    return colors[code] || '#999999';
-};
 class StormCells extends MapSourceModule {
     private request: ApiRequest;
 
@@ -173,7 +106,7 @@ class StormCells extends MapSourceModule {
                                         <strong>Near ${placeName}</strong>
                                     </div>
                                     <div>
-                                        <div class="indicator" style="background:${getColor(traits.type)};"></div>
+                                        <div class="indicator" style="background:${colorStormCell(traits.type)};"></div>
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +165,9 @@ class StormCells extends MapSourceModule {
                                 <div class="awxjs__app__ui-panel-info__hazard-label">
                                     ${hazard.name}
                                 </div>
-                                <div class="awxjs__app__ui-panel-info__hazard-bar">
+                                <div class="awxjs__app__ui-panel-info__hazard-bar
+                                    awxjs__app__ui-panel-info__hazard-bar-sm"
+                                >
                                     <div class="awxjs__app__ui-panel-info__hazard-bar-inner">
                                         <div
                                             class="awxjs__app__ui-panel-info__hazard-bar-progress
@@ -243,6 +178,7 @@ class StormCells extends MapSourceModule {
                                 </div>
                                 <div
                                     class="awxjs__app__ui-panel-info__hazard-value
+                                    awxjs__app__ui-panel-info__hazard-value-lg
                                         awxjs__app__ui-panel-info__hazard-value-${indexString}"
                                     >${level}</div>
                             </div>
@@ -306,7 +242,7 @@ class StormCells extends MapSourceModule {
                     });
 
                     return `
-                        <div class="awxjs__app__ui-panel-info__table">
+                        <div class="awxjs__app__ui-panel-info__table awxjs__table">
                             ${rows.filter((v: any) => typeof v !== 'undefined').join('\n')}
                         </div>
                     `;
@@ -372,7 +308,7 @@ class StormCells extends MapSourceModule {
                     const content = rows.reduce((result, row) => {
                         result.push(`
                             <div class="awxjs__ui-row">
-                                <div class="awxjs__ui-expand label">${row.label}</div>
+                                <div class="awxjs__ui-expand awxjs__text-sm label">${row.label}</div>
                                 <div class="awxjs__ui-expand value">${row.value}</div>
                             </div>
                         `);
@@ -381,7 +317,7 @@ class StormCells extends MapSourceModule {
                     }, []).join('\n');
 
                     return `
-                        <div class="awxjs__app__ui-panel-info__table">
+                        <div class="awxjs__app__ui-panel-info__table awxjs__table awxjs__table-bordered">
                             ${content}
                         </div>
                     `;
