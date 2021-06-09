@@ -35,7 +35,12 @@ class StormThreats extends MapSourceModule {
     controls(): any {
         return {
             value: this.id,
-            title: 'Storm Threats'
+            title: 'Storm Threats',
+            controls: {
+                settings: [{
+                    type: 'opacity'
+                }]
+            }
         };
     }
 

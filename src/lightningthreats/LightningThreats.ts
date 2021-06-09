@@ -35,7 +35,12 @@ class LightningThreats extends MapSourceModule {
     controls(): any {
         return {
             value: this.id,
-            title: 'Lightning Threats'
+            title: 'Lightning Threats',
+            controls: {
+                settings: [{
+                    type: 'opacity'
+                }]
+            }
         };
     }
 

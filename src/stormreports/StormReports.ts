@@ -53,7 +53,7 @@ class StormReports extends MapSourceModule {
             },
             style: {
                 marker: (data: any) => {
-                    const type: string = get(data, 'report.cat');
+                    const type: string = data?.report?.cat;
 
                     return {
                         className: 'marker-stormreport',
@@ -87,7 +87,7 @@ class StormReports extends MapSourceModule {
         return {
             views: [{
                 data: (data: any): any => {
-                    const payload = get(data, 'stormreports');
+                    const payload = data?.stormreports;
 
                     if (!payload) {
                         return;
@@ -100,17 +100,17 @@ class StormReports extends MapSourceModule {
 
                     const rows: any[] = [{
                         label: 'Location',
-                        value: data.report.name
+                        value: data.report?.name
                     }, {
                         label: 'Description',
-                        value: ucwords(data.report.type)
+                        value: ucwords(data.report?.type)
                     }, {
                         label: 'Magnitude',
                         value: getMagnitude(data.report)
                     }, {
                         label: 'Report Time',
                         value: formatDate(
-                            new Date(data.report.timestamp * 1000),
+                            new Date(data.report?.timestamp * 1000),
                             'h:mm a, MMM d, yyyy'
                         )
                     }, {

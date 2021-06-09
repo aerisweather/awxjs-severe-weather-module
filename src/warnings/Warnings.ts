@@ -7,7 +7,7 @@ class Warnings extends MapSourceModule {
     private request: ApiRequest;
 
     get id(): string {
-        return 'warnings';
+        return this.opts?.id || 'warnings';
     }
 
     source(): any {
@@ -34,7 +34,8 @@ class Warnings extends MapSourceModule {
                     stroke: {
                         color: `#${utils.get(item, 'properties.details.color')}`,
                         width: 2,
-                        weight: 3
+                        weight: 3,
+                        adjustOpacity: false
                     }
                 })
             }
@@ -44,7 +45,12 @@ class Warnings extends MapSourceModule {
     controls(): any {
         return {
             value: this.id,
-            title: 'Warnings'
+            title: 'Warnings',
+            controls: {
+                settings: [{
+                    type: 'opacity'
+                }]
+            }
         };
     }
 

@@ -29,8 +29,13 @@ class Severe extends ModuleGroup {
 
         // insert raster lightning strikes control in third position
         buttons.splice(2, 0, {
-            value: 'lightning-strikes-5m-icons',
-            title: 'Lightning Strikes'
+            value: 'lightning-strikes-15m-icons',
+            title: 'Lightning Strikes',
+            controls: {
+                settings: [{
+                    type: 'opacity'
+                }]
+            }
         });
 
         return {

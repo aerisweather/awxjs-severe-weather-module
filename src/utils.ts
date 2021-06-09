@@ -180,22 +180,22 @@ export const getStormCellForecast = (aeris: any, forecast: any) => {
     return final;
 };
 
-export const getMagnitude = (data: any) => {
+export const getMagnitude = (data: any = {}) => {
     let magnitude = '';
 
-    if (data.cat === 'snow' && !isEmpty(data.detail.snowIN)) {
+    if (data.cat === 'snow' && !isEmpty(data.detail?.snowIN)) {
         magnitude = `${data.detail.snowIN} inches`;
     }
 
-    if (data.cat === 'wind' && !isEmpty(data.detail.windSpeedMPH)) {
+    if (data.cat === 'wind' && !isEmpty(data.detail?.windSpeedMPH)) {
         magnitude = `${data.detail.windSpeedMPH} mph`;
     }
 
-    if (data.cat === 'rain' && !isEmpty(data.detail.rainIN)) {
+    if (data.cat === 'rain' && !isEmpty(data.detail?.rainIN)) {
         magnitude = `${data.detail.rainIN} inches`;
     }
 
-    if (data.cat === 'hail' && !isEmpty(data.detail.hailIN)) {
+    if (data.cat === 'hail' && !isEmpty(data.detail?.hailIN)) {
         magnitude = `${data.detail.hailIN} inches`;
     }
 
