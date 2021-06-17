@@ -41,30 +41,6 @@ export const colorStormCell = (code: string): string => {
     }
 };
 
-export const indexForIntensity = (value: number): any => {
-    if (value >= 60) {
-        return { index: 5, label: 'Extreme' };
-    }
-
-    if (value >= 55) {
-        return { index: 4, label: 'Very Heavy' };
-    }
-
-    if (value >= 50) {
-        return { index: 3, label: 'Heavy' };
-    }
-
-    if (value >= 35) {
-        return { index: 2, label: 'Moderate' };
-    }
-
-    if (value >= 20) {
-        return { index: 1, label: 'Light' };
-    }
-
-    return { index: 0, label: 'Very Light' };
-};
-
 export const indexForSeverity = (value: number): any => {
     // `value` is in the range 0..10 and needs to be converted to an index value in
     // the range 0..5
@@ -147,6 +123,103 @@ export const getStormCellMarker = (data: any): any => {
         },
         size: isCurrent ? [15, 15] : [10, 10]
     };
+};
+
+export const getIndexString = (index: any): any => {
+
+    return `${index}`.replace(/\./g, 'p');
+};
+
+export const getPercent = (index: any): any => {
+ return Math.round((index / 5) * 1000) / 10;
+}
+ export const round5 = (x: any): any => {
+    return Math.ceil(x/5)*5;
+}
+
+export const rotationIntensity = (value: number): any => {
+    if (value >= 20) {
+        return {index: 5, label: 'Inense'}
+    }
+    if (value >= 15) {
+        return {index: 4, label: 'Strong'}
+    }
+    if (value >= 10) {
+        return {index: 3, label: 'Moderate'}
+    }
+    if (value >= 5) {
+        return {index: 2, label: 'Weak'}
+    }
+    if (value < 5) {
+        return {index: 0, label: 'None'}
+    }
+}
+//pulled from https://www.weather.gov/lwx/skywarn_hail
+export const indexForHail = (value: number): any => {
+    if (value >= 4.5) {
+        return {index: 5, label: 'Softball Size'}
+    }
+    if (value >= 4.0) {
+        return {index: 5, label: 'Grapefruit Size'}
+    }
+    if (value >= 3.0) {
+        return {index: 5, label: 'Teacup Size'}
+    }
+    if (value >= 2.75) {
+        return {index: 5, label: 'Baseball Size'}
+    }
+    if (value >= 2.5) {
+        return {index: 5, label: 'Tennis Ball Size'}
+    }
+    if (value >= 2.0) {
+        return {index: 4, label: 'Hen Egg Size'}
+    }
+    if (value >= 1.75) {
+        return {index: 4, label: 'Golf Ball Size'}
+    }
+    if (value >= 1.50) {
+        return {index: 4, label: 'Ping Pong Size'}
+    }
+    if (value >= 1.25) {
+        return {index: 3, label: 'Half Dollar Size'}
+    }
+    if (value >= 1.00) {
+        return {index: 3, label: 'Quarter Size'}
+    }
+    if (value >= 0.75) {
+        return {index: 2, label: 'Penny Size'}
+    }
+    if (value >= 0.5) {
+        return {index: 1, label: 'Small Marble Size'}
+    }
+    if (value >= 0.25) {
+        return {index: 1, label: 'Pea Size'}
+    }
+
+    return { index: 0, label: 'None'};
+}
+export const indexForIntensity = (value: number): any => {
+    if (value >= 60) {
+        return { index: 5, label: 'Extreme' };
+    }
+
+    if (value >= 55) {
+        return { index: 4, label: 'Very Heavy' };
+    }
+
+    if (value >= 50) {
+        return { index: 3, label: 'Heavy' };
+    }
+
+    if (value >= 35) {
+        return { index: 2, label: 'Moderate' };
+    }
+
+    if (value >= 20) {
+        return { index: 1, label: 'Light' };
+    }
+
+    return { index: 0, label: 'Very Light' };
 };
 
 export const formatStormCells = (data: any): any => {

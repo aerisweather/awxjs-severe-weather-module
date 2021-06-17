@@ -2,7 +2,7 @@ import MapSourceModule from '@aerisweather/javascript-sdk/dist/modules/MapSource
 import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
 import * as utils from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
-
+import { isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 class Warnings extends MapSourceModule {
     private request: ApiRequest;
 
@@ -57,11 +57,13 @@ class Warnings extends MapSourceModule {
     infopanel(): any {
         return {
             views: [{
-                data: (data: any) => data.alert.details,
+                data: (data: any) => {
+                    if (!isset(data)) return;
+                    data = data.alert.details;
+                    return data;
+                },
                 renderer: (data: any) => {
-                    if (!data) {
-                        return;
-                    }
+                    if (!isset(data)) return;
 
                     return `<div class="alert">${(data.body || '').replace(/\n/g, '<br>')}</div>`;
                 }

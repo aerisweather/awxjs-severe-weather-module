@@ -9,10 +9,10 @@
   dependencies:
     "@babel/types" "^7.13.0"
 
-"@aerisweather/javascript-sdk@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@aerisweather/javascript-sdk/-/javascript-sdk-1.4.0.tgz#263bd32602e252503830dbdc60c695993021b652"
-  integrity sha512-RfF/N7QST7rqThjorLTZ1/GYz9XGTzZv9OxSOeuZuMGb6gzlMocA8vwk+hnAF6cab0GxQuaSRpb5XOLTleeLug==
+"@aerisweather/javascript-sdk@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@aerisweather/javascript-sdk/-/javascript-sdk-1.4.2.tgz#6d3bb4c21138b6866d7f048f34489b8c9bf431c2"
+  integrity sha512-eU00skmMjOFBr6r6zLM/6Yfy4YrIkLr2AON1AvV6o7ZY5yvoyszCeT4NGUezEo1AuylpZirAZ2QahF+miX3sAQ==
   dependencies:
     axios "^0.18.0"
     date-fns "^2.8.0"

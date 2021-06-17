@@ -10,6 +10,7 @@ import { colorStormCell,
     indexForIntensity,
     indexForSeverity } from '../utils';
 
+
 class StormCells extends MapSourceModule {
     private request: ApiRequest;
 
@@ -117,7 +118,6 @@ class StormCells extends MapSourceModule {
                 requiresData: true,
                 data: (data: any) => {
                     const stormcells = get(data, 'stormcells');
-
                     if (!stormcells) return;
 
                     const { dbzm } = stormcells;
@@ -156,8 +156,8 @@ class StormCells extends MapSourceModule {
                         }
 
                         const indexString = `${index}`.replace(/\./g, 'p');
-                        const percent = Math.round((index / 5) * 1000) / 10;
 
+                        const percent = Math.round((index / 5) * 1000) / 10;
                         return `
                             <div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
                                 <div class="awxjs__app__ui-panel-info__hazard-label">

@@ -92,6 +92,16 @@ window.addEventListener('load', () => {
 </html>
 ```
 
+## Utilizing the Storm Threats Infopanel
+
+![AerisWeather JS - Severe Module](docs/img/storm_threats.png)
+
+By default, the Interactive Map App will open an infopanel filled with local weather information when clicking the map. A configuration option allows you to click on the map and view localized threat information from the AerisWeather API's [threats endpoint](https://www.aerisweather.com/support/docs/api/reference/endpoints/threats/). To enable this, just pass in the `{showThreats:true}` option when instantiating the Severe module:
+
+```javascript 
+app.modules.add(new Severe( {showThreats: true}));
+```
+
 ## Map Module Documentation
 
 We have extensive [documentation](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/map-modules/) online when using map modules with [InteractiveMapApp](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/map-modules/interactive-map-app/) and [InteractiveMap](https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/map-modules/interactive-map/) instances, which will go into more detail on the various options available to you related to map modules.
