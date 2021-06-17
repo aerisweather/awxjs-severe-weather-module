@@ -114,7 +114,9 @@ function (_super) {
       },
       style: {
         marker: function (data) {
-          var type = (0, _index.get)(data, 'report.cat');
+          var _a;
+
+          var type = (_a = data === null || data === void 0 ? void 0 : data.report) === null || _a === void 0 ? void 0 : _a.cat;
           return {
             className: 'marker-stormreport',
             svg: {
@@ -147,7 +149,7 @@ function (_super) {
     return {
       views: [{
         data: function (data) {
-          var payload = (0, _index.get)(data, 'stormreports');
+          var payload = data === null || data === void 0 ? void 0 : data.stormreports;
 
           if (!payload) {
             return;
@@ -156,19 +158,21 @@ function (_super) {
           return payload;
         },
         renderer: function (data) {
+          var _a, _b, _c;
+
           if (!data) return;
           var rows = [{
             label: 'Location',
-            value: data.report.name
+            value: (_a = data.report) === null || _a === void 0 ? void 0 : _a.name
           }, {
             label: 'Description',
-            value: (0, _strings.ucwords)(data.report.type)
+            value: (0, _strings.ucwords)((_b = data.report) === null || _b === void 0 ? void 0 : _b.type)
           }, {
             label: 'Magnitude',
             value: (0, _utils.getMagnitude)(data.report)
           }, {
             label: 'Report Time',
-            value: (0, _index.formatDate)(new Date(data.report.timestamp * 1000), 'h:mm a, MMM d, yyyy')
+            value: (0, _index.formatDate)(new Date(((_c = data.report) === null || _c === void 0 ? void 0 : _c.timestamp) * 1000), 'h:mm a, MMM d, yyyy')
           }, {
             label: 'Remarks',
             value: data.report.comments || ''

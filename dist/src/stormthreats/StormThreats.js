@@ -82,7 +82,12 @@ function (_super) {
   StormThreats.prototype.controls = function () {
     return {
       value: this.id,
-      title: 'Storm Threats'
+      title: 'Storm Threats',
+      controls: {
+        settings: [{
+          type: 'opacity'
+        }]
+      }
     };
   };
 

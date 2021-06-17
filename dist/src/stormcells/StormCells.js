@@ -55,105 +55,6 @@ var __assign = void 0 && (void 0).__assign || function () {
   return __assign.apply(this, arguments);
 };
 
-var colors = {
-  general: '#2ed300',
-  hail: '#ebe100',
-  rotating: '#f17200',
-  tornado: '#ff2600'
-};
-
-var indexForIntensity = function (value) {
-  if (value >= 60) {
-    return {
-      index: 5,
-      label: 'Extreme'
-    };
-  }
-
-  if (value >= 55) {
-    return {
-      index: 4,
-      label: 'Very Heavy'
-    };
-  }
-
-  if (value >= 50) {
-    return {
-      index: 3,
-      label: 'Heavy'
-    };
-  }
-
-  if (value >= 35) {
-    return {
-      index: 2,
-      label: 'Moderate'
-    };
-  }
-
-  if (value >= 20) {
-    return {
-      index: 1,
-      label: 'Light'
-    };
-  }
-
-  return {
-    index: 0,
-    label: 'Very Light'
-  };
-};
-
-var indexForSeverity = function (value) {
-  // `value` is in the range 0..10 and needs to be converted to an index value in
-  // the range 0..5
-  var index = Math.floor(value / 2);
-  var labels = ['None', 'Minimal', 'Low', 'Moderate', 'High', 'Extreme'];
-  return {
-    index: index,
-    label: labels[index]
-  };
-};
-
-var getSeverity = function (cell) {
-  if (cell === void 0) {
-    cell = {};
-  }
-
-  var hail = cell.hail,
-      tvs = cell.tvs,
-      traits = cell.traits;
-  var severity = 0;
-
-  if ((0, _index.isset)(hail) && hail.probSevere > 0) {
-    severity = hail.probSevere / 10;
-  }
-
-  if ((0, _index.isset)(traits) && severity < 10) {
-    var rotating = traits.rotating,
-        tornado = traits.tornado;
-
-    if (rotating) {
-      severity = 7;
-    }
-
-    if (tornado) {
-      severity = 10;
-    }
-  }
-
-  if (severity < 8 && tvs === 1) {
-    severity = 8;
-  }
-
-  return severity;
-};
-
-var getColor = function (code) {
-  code = (code || 'none').toLowerCase();
-  return colors[code] || '#999999';
-};
-
 var StormCells =
 /** @class */
 function (_super) {
@@ -249,7 +150,7 @@ function (_super) {
               metric = data.metric;
           var placeName = (0, _strings.toName)(place.name) + ", " + place.state.toUpperCase();
           var movementBlock = (0, _index.isset)(movement) ? "\n                            <div class=\"awxjs__ui-row\">\n                                <div>\n                                    Moving " + movement.dirTo + "\n                                    at " + (0, _units.formatDataValue)(movement, 'speedMPH', 'speedKMH', metric) + "\n                                </div>\n                            </div>\n                        " : '';
-          return "\n                        <div class=\"stormtrack-loc awxjs__app__ui-panel-info__table\">\n                            <div class=\"awxjs__ui-row\">\n                                <div class=\"awxjs__ui-cols align-center\">\n                                    <div class=\"awxjs__ui-expand awxjs__text-lg value\">\n                                        <strong>Near " + placeName + "</strong>\n                                    </div>\n                                    <div>\n                                        <div class=\"indicator\" style=\"background:" + getColor(traits.type) + ";\"></div>\n                                    </div>\n                                </div>\n                            </div>\n                            " + movementBlock + "\n                        </div>\n                    ";
+          return "\n                        <div class=\"stormtrack-loc awxjs__app__ui-panel-info__table\">\n                            <div class=\"awxjs__ui-row\">\n                                <div class=\"awxjs__ui-cols align-center\">\n                                    <div class=\"awxjs__ui-expand awxjs__text-lg value\">\n                                        <strong>Near " + placeName + "</strong>\n                                    </div>\n                                    <div>\n                                        <div class=\"indicator\" style=\"background:" + (0, _utils.colorStormCell)(traits.type) + ";\"></div>\n                                    </div>\n                                </div>\n                            </div>\n                            " + movementBlock + "\n                        </div>\n                    ";
         }
       }, {
         // severity levels
@@ -268,7 +169,7 @@ function (_super) {
             });
           }
 
-          var severity = getSeverity(data.stormcells);
+          var severity = (0, _utils.getSeverity)(data.stormcells);
           result.push({
             type: 'severity',
             name: 'Severity',
@@ -282,14 +183,14 @@ function (_super) {
             var level = '';
 
             if (hazard.type === 'intensity') {
-              var _a = indexForIntensity(hazard.value),
+              var _a = (0, _utils.indexForIntensity)(hazard.value),
                   hazardIndex = _a.index,
                   label = _a.label;
 
               index = hazardIndex;
               level = label;
             } else if (hazard.type === 'severity') {
-              var _b = indexForSeverity(hazard.value),
+              var _b = (0, _utils.indexForSeverity)(hazard.value),
                   hazardIndex = _b.index,
                   label = _b.label;
 
@@ -299,7 +200,7 @@ function (_super) {
 
             var indexString = ("" + index).replace(/\./g, 'p');
             var percent = Math.round(index / 5 * 1000) / 10;
-            return "\n                            <div class=\"awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center\">\n                                <div class=\"awxjs__app__ui-panel-info__hazard-label\">\n                                    " + hazard.name + "\n                                </div>\n                                <div class=\"awxjs__app__ui-panel-info__hazard-bar\">\n                                    <div class=\"awxjs__app__ui-panel-info__hazard-bar-inner\">\n                                        <div\n                                            class=\"awxjs__app__ui-panel-info__hazard-bar-progress\n                                                awxjs__app__ui-panel-info__hazard-indice-fill-" + indexString + "\"\n                                            style=\"width:" + percent + "%;\"\n                                        ></div>\n                                    </div>\n                                </div>\n                                <div\n                                    class=\"awxjs__app__ui-panel-info__hazard-value\n                                        awxjs__app__ui-panel-info__hazard-value-" + indexString + "\"\n                                    >" + level + "</div>\n                            </div>\n                        ";
+            return "\n                            <div class=\"awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center\">\n                                <div class=\"awxjs__app__ui-panel-info__hazard-label\">\n                                    " + hazard.name + "\n                                </div>\n                                <div class=\"awxjs__app__ui-panel-info__hazard-bar\n                                    awxjs__app__ui-panel-info__hazard-bar-sm\"\n                                >\n                                    <div class=\"awxjs__app__ui-panel-info__hazard-bar-inner\">\n                                        <div\n                                            class=\"awxjs__app__ui-panel-info__hazard-bar-progress\n                                                awxjs__app__ui-panel-info__hazard-indice-fill-" + indexString + "\"\n                                            style=\"width:" + percent + "%;\"\n                                        ></div>\n                                    </div>\n                                </div>\n                                <div\n                                    class=\"awxjs__app__ui-panel-info__hazard-value\n                                    awxjs__app__ui-panel-info__hazard-value-lg\n                                        awxjs__app__ui-panel-info__hazard-value-" + indexString + "\"\n                                    >" + level + "</div>\n                            </div>\n                        ";
           });
           return "\n                        <div class=\"awxjs__app__ui-panel-info__hazards\">\n                            " + hazards.join('') + "\n                        </div>\n                    ";
         }
@@ -344,7 +245,7 @@ function (_super) {
             var time = (0, _index.formatDate)(new Date(timestamp * 1000), 'h:mm a');
             return "\n                            <div class=\"awxjs__ui-row\">\n                                <div class=\"awxjs__ui-expand label\">" + place.name + "</div>\n                                <div class=\"awxjs__ui-expand value\">" + time + "</div>\n                            </div>\n                        ";
           });
-          return "\n                        <div class=\"awxjs__app__ui-panel-info__table\">\n                            " + rows.filter(function (v) {
+          return "\n                        <div class=\"awxjs__app__ui-panel-info__table awxjs__table\">\n                            " + rows.filter(function (v) {
             return typeof v !== 'undefined';
           }).join('\n') + "\n                        </div>\n                    ";
         }
@@ -400,10 +301,10 @@ function (_super) {
             value: vil
           }];
           var content = rows.reduce(function (result, row) {
-            result.push("\n                            <div class=\"awxjs__ui-row\">\n                                <div class=\"awxjs__ui-expand label\">" + row.label + "</div>\n                                <div class=\"awxjs__ui-expand value\">" + row.value + "</div>\n                            </div>\n                        ");
+            result.push("\n                            <div class=\"awxjs__ui-row\">\n                                <div class=\"awxjs__ui-expand awxjs__text-sm label\">" + row.label + "</div>\n                                <div class=\"awxjs__ui-expand value\">" + row.value + "</div>\n                            </div>\n                        ");
             return result;
           }, []).join('\n');
-          return "\n                        <div class=\"awxjs__app__ui-panel-info__table\">\n                            " + content + "\n                        </div>\n                    ";
+          return "\n                        <div class=\"awxjs__app__ui-panel-info__table awxjs__table awxjs__table-bordered\">\n                            " + content + "\n                        </div>\n                    ";
         }
       }]
     };

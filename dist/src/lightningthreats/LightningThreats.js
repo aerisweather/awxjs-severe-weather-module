@@ -82,7 +82,12 @@ function (_super) {
   LightningThreats.prototype.controls = function () {
     return {
       value: this.id,
-      title: 'Lightning Threats'
+      title: 'Lightning Threats',
+      controls: {
+        settings: [{
+          type: 'opacity'
+        }]
+      }
     };
   };
 

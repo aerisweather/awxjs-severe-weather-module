@@ -17,6 +17,12 @@ var _StormReports = _interopRequireDefault(require("./stormreports/StormReports"
 
 var _StormCells = _interopRequireDefault(require("./stormcells/StormCells"));
 
+var _index = require("@aerisweather/javascript-sdk/dist/utils/index");
+
+var _strings = require("@aerisweather/javascript-sdk/dist/utils/strings");
+
+var _utils = require("./utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var __extends = void 0 && (void 0).__extends || function () {
@@ -189,8 +195,12 @@ var Severe =
 function (_super) {
   __extends(Severe, _super);
 
-  function Severe() {
-    return _super !== null && _super.apply(this, arguments) || this;
+  function Severe(args) {
+    var _this = _super.call(this) || this;
+
+    _this._showThreats = false;
+    if (args) _this._showThreats = args.showThreats;
+    return _this;
   }
 
   Object.defineProperty(Severe.prototype, "id", {
@@ -222,13 +232,171 @@ function (_super) {
     }) : []; // insert raster lightning strikes control in third position
 
     buttons.splice(2, 0, {
-      value: 'lightning-strikes-5m-icons',
-      title: 'Lightning Strikes'
+      value: 'lightning-strikes-15m-icons',
+      title: 'Lightning Strikes',
+      controls: {
+        settings: [{
+          type: 'opacity'
+        }]
+      }
     });
     return {
       title: 'Severe Weather',
       buttons: buttons
     };
+  };
+
+  Severe.prototype.initialize = function (account, app, map) {
+    var _this = this;
+
+    if (map === void 0) {
+      map = null;
+    }
+
+    if (!this._showThreats) return;
+
+    _super.prototype.initialize.call(this, account, app, map); // do custom info panel stuff...
+
+
+    var localWeatherConfig = {
+      request: function (data) {
+        var request = _this.account.api().endpoint('threats');
+
+        _this._request = request;
+        return request;
+      },
+      views: [{
+        requresData: true,
+        //Location info and threat phrase
+        data: function (data) {
+          if (!data) return null;
+          return data;
+        },
+        renderer: function (data) {
+          if (!data[0]) return;
+          var place = data[0].place;
+          var threatPhrase = 'No Immediate Threats';
+          var returnValue = "\n                    <div class=\"awxjs__app__ui-panel-info__place\">\n                        <div class=\"awxjs__app__ui-panel-info__place-name\">" + (0, _strings.toName)(place.name) + ", " + place.state.toUpperCase() + "</div>\n                        <div class=\"awxjs__app__ui-panel-info__obs-timestamp\" style=\"font-size:14px\"> " + (0, _index.formatDate)(new Date(data[0].periods[0].timestamp * 1000), 'h:mm a, MMM d, yyyy') + "</div>\n                    ";
+          return returnValue;
+        }
+      }, {
+        title: 'Active Threats',
+        renderer: function (data) {
+          if (!data[0]) return;
+          var threatPhrase = data[0].periods[0].storms ? data[0].periods[0].storms.phrase.long : 'No Immediate Threats';
+          var snippet = "\n                    <div class=\"awxjs__app__ui-panel-info__threats\">\n                        <div class=\"awxjs__app__ui-panel-info__threats-row\">" + threatPhrase + "</div>\n                    </div>";
+          return snippet;
+        }
+      }, {
+        data: function (data) {
+          if (!data) return null;
+          return data;
+        },
+        renderer: function (data) {
+          if (!data[0]) return;
+
+          if (data[0].periods[0].storms) {
+            var intensity = (0, _utils.indexForIntensity)(data[0].periods[0].storms.dbz.max);
+            var hailSize = {};
+            var rotationScale = {};
+
+            if ((0, _index.isset)(data[0].periods[0].storms.mda)) {
+              rotationScale = (0, _utils.rotationIntensity)(data[0].periods[0].storms.mda.max);
+            } else {
+              rotationScale = {
+                index: 0,
+                label: 'None'
+              };
+            }
+
+            if ((0, _index.isset)(data[0].periods[0].storms.hail)) {
+              console.log(data[0].periods[0].storms.hail);
+              hailSize = (0, _utils.indexForHail)(data[0].periods[0].storms.hail.maxSizeIN);
+            } else {
+              hailSize = {
+                index: 0,
+                label: 'None'
+              };
+            }
+
+            var rows = [{
+              type: 'Precip Intensity',
+              indexString: (0, _utils.getIndexString)(intensity.index),
+              percent: (0, _utils.getPercent)(intensity.index),
+              label: intensity.label
+            }, {
+              type: 'Max Hail Size',
+              indexString: (0, _utils.getIndexString)(hailSize.index),
+              percent: (0, _utils.getPercent)(hailSize.index),
+              label: hailSize.label
+            }, {
+              type: 'Rotation',
+              indexString: (0, _utils.getIndexString)(rotationScale.index),
+              percent: (0, _utils.getPercent)(rotationScale.index),
+              label: rotationScale.label
+            }];
+            var content = rows.reduce(function (result, row) {
+              result.push("<div class=\"awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center\">\n                            <div class=\"awxjs__app__ui-panel-info__hazard-label\">\n                                " + row.type + "\n                            </div>\n                            <div class=\"awxjs__app__ui-panel-info__hazard-bar\">\n                                <div class=\"awxjs__app__ui-panel-info__hazard-bar-inner\">\n                                    <div\n                                        class=\"awxjs__app__ui-panel-info__hazard-bar-progress\n                                            awxjs__app__ui-panel-info__hazard-indice-fill-" + row.indexString + "\"\n                                        style=\"width:" + row.percent + "%;\"\n                                    ></div>\n                                </div>\n                            </div>\n                            <div\n                                class=\"awxjs__app__ui-panel-info__hazard-value\n                                    awxjs__app__ui-panel-info__hazard-value-" + row.indexString + "\"\n                                >" + row.label + "</div>\n                            </div>");
+              return result;
+            }, []).join('\n');
+            return content;
+          } else {
+            return '';
+          }
+        }
+      }, {
+        data: function (data) {
+          if (!data) return null;
+          return data;
+        },
+        renderer: function (data) {
+          if (!data[0]) return;
+          var returnValue = '';
+
+          if (data[0].periods[0].storms) {
+            var rows = [{
+              label: 'Approaching',
+              value: data[0].periods[0].storms.approaching ? 'Yes' : 'No'
+            }, {
+              label: 'Tornadoes',
+              value: data[0].periods[0].storms.tornadic ? 'Possible' : 'No'
+            }];
+            var content = rows.reduce(function (result, row) {
+              result.push("\n                                <div class=\"awxjs__ui-row\">\n                                    <div class=\"awxjs__ui-expand label\">" + row.label + "</div>\n                                    <div class=\"awxjs__ui-expand value\">" + row.value + "</div>\n                                </div>\n                            ");
+              return result;
+            }, []).join('\n');
+            return "\n                            <div class=\"awxjs__app__ui-panel-info__table\">\n                                " + content + "\n                            </div>\n                        ";
+          } else {
+            return '';
+          }
+        }
+      }, {
+        title: 'Affecting Storms',
+        data: function (data) {
+          if (!data) return;
+          return data;
+        },
+        renderer: function (data) {
+          if (!data[0]) return;
+          if (data[0].periods[0].storms == undefined) return;
+          var returnValue = '';
+
+          if (data[0].periods[0].storms) {
+            var minSpeed = (0, _utils.round5)(data[0].periods[0].storms.speed.minMPH);
+            var maxSpeed = (0, _utils.round5)(data[0].periods[0].storms.speed.maxMPH);
+            var speedString = minSpeed != maxSpeed ? minSpeed + "-" + maxSpeed : maxSpeed;
+            var threat = data[0].periods[0].storms;
+            returnValue += "\n                        <div class=\"awxjs__app__ui-panel-info__table\">\n                        <div class=\"awxjs__ui-row\">\n                            <div class=\"awxjs__ui-expand label\">Location</div>\n                            <div class=\"awxjs__ui-expand value\">" + data[0].periods[0].storms.distance.avgMI + " mi " + data[0].periods[0].storms.direction.from + " (" + data[0].periods[0].storms.direction.fromDEG + "&deg;)</div>\n                        </div>\n                        <div class=\"awxjs__ui-row\">\n                            <div class=\"awxjs__ui-expand label\">Movement</div>\n                            <div class=\"awxjs__ui-expand value\">" + data[0].periods[0].storms.direction.to + " at " + (0, _utils.round5)(data[0].periods[0].storms.speed.avgMPH) + " mph</div>\n                        </div></div>";
+          }
+
+          return returnValue;
+        }
+      }]
+    };
+    this.app.panels.info.setContentView('threats', localWeatherConfig);
+    this.app.map.on('click', function (e) {
+      _this.app.showInfoAtCoord(e.data.coord, 'threats', 'Storm Threats');
+    });
   };
 
   return Severe;

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getStormReportMarkerContent = exports.getMagnitude = exports.getStormCellForecast = exports.formatStormCells = exports.getStormCellMarker = void 0;
+exports.getStormReportMarkerContent = exports.getMagnitude = exports.getStormCellForecast = exports.formatStormCells = exports.indexForIntensity = exports.indexForHail = exports.rotationIntensity = exports.round5 = exports.getPercent = exports.getIndexString = exports.getStormCellMarker = exports.getSeverity = exports.indexForSeverity = exports.colorStormCell = void 0;
 
 var _index = require("@aerisweather/javascript-sdk/dist/utils/index");
 
@@ -46,27 +46,82 @@ var getBearing = function (startLat, startLng, endLat, endLng) {
   result = toDegrees(result);
   return (result + 360) % 360;
 };
+/**
+ * Storm Cells
+ */
+
 
 var colorStormCell = function (code) {
   code = code.toLowerCase();
 
   switch (code) {
     case 'general':
-      return '#2ED300';
+      return '#2ed300';
 
     case 'hail':
-      return '#EBE100';
+      return '#ebe100';
 
     case 'rotating':
-      return '#F17200';
+      return '#f17200';
 
     case 'tornado':
-      return '#FF2600';
+      return '#ff2600';
 
     default:
       return '#000000';
   }
 };
+
+exports.colorStormCell = colorStormCell;
+
+var indexForSeverity = function (value) {
+  // `value` is in the range 0..10 and needs to be converted to an index value in
+  // the range 0..5
+  var index = Math.floor(value / 2);
+  var labels = ['None', 'Minimal', 'Low', 'Moderate', 'High', 'Extreme'];
+  return {
+    index: index,
+    label: labels[index]
+  };
+};
+
+exports.indexForSeverity = indexForSeverity;
+
+var getSeverity = function (cell) {
+  if (cell === void 0) {
+    cell = {};
+  }
+
+  var hail = cell.hail,
+      tvs = cell.tvs,
+      traits = cell.traits;
+  var severity = 0;
+
+  if ((0, _index.isset)(hail) && hail.probSevere > 0) {
+    severity = hail.probSevere / 10;
+  }
+
+  if ((0, _index.isset)(traits) && severity < 10) {
+    var rotating = traits.rotating,
+        tornado = traits.tornado;
+
+    if (rotating) {
+      severity = 7;
+    }
+
+    if (tornado) {
+      severity = 10;
+    }
+  }
+
+  if (severity < 8 && tvs === 1) {
+    severity = 8;
+  }
+
+  return severity;
+};
+
+exports.getSeverity = getSeverity;
 
 var getStormCellMarker = function (data) {
   var isCurrent = data.isCurrent;
@@ -112,6 +167,208 @@ var getStormCellMarker = function (data) {
 };
 
 exports.getStormCellMarker = getStormCellMarker;
+
+var getIndexString = function (index) {
+  return ("" + index).replace(/\./g, 'p');
+};
+
+exports.getIndexString = getIndexString;
+
+var getPercent = function (index) {
+  return Math.round(index / 5 * 1000) / 10;
+};
+
+exports.getPercent = getPercent;
+
+var round5 = function (x) {
+  return Math.ceil(x / 5) * 5;
+};
+
+exports.round5 = round5;
+
+var rotationIntensity = function (value) {
+  if (value >= 20) {
+    return {
+      index: 5,
+      label: 'Inense'
+    };
+  }
+
+  if (value >= 15) {
+    return {
+      index: 4,
+      label: 'Strong'
+    };
+  }
+
+  if (value >= 10) {
+    return {
+      index: 3,
+      label: 'Moderate'
+    };
+  }
+
+  if (value >= 5) {
+    return {
+      index: 2,
+      label: 'Weak'
+    };
+  }
+
+  if (value < 5) {
+    return {
+      index: 0,
+      label: 'None'
+    };
+  }
+}; //pulled from https://www.weather.gov/lwx/skywarn_hail
+
+
+exports.rotationIntensity = rotationIntensity;
+
+var indexForHail = function (value) {
+  if (value >= 4.5) {
+    return {
+      index: 5,
+      label: 'Softball Size'
+    };
+  }
+
+  if (value >= 4.0) {
+    return {
+      index: 5,
+      label: 'Grapefruit Size'
+    };
+  }
+
+  if (value >= 3.0) {
+    return {
+      index: 5,
+      label: 'Teacup Size'
+    };
+  }
+
+  if (value >= 2.75) {
+    return {
+      index: 5,
+      label: 'Baseball Size'
+    };
+  }
+
+  if (value >= 2.5) {
+    return {
+      index: 5,
+      label: 'Tennis Ball Size'
+    };
+  }
+
+  if (value >= 2.0) {
+    return {
+      index: 4,
+      label: 'Hen Egg Size'
+    };
+  }
+
+  if (value >= 1.75) {
+    return {
+      index: 4,
+      label: 'Golf Ball Size'
+    };
+  }
+
+  if (value >= 1.50) {
+    return {
+      index: 4,
+      label: 'Ping Pong Size'
+    };
+  }
+
+  if (value >= 1.25) {
+    return {
+      index: 3,
+      label: 'Half Dollar Size'
+    };
+  }
+
+  if (value >= 1.00) {
+    return {
+      index: 3,
+      label: 'Quarter Size'
+    };
+  }
+
+  if (value >= 0.75) {
+    return {
+      index: 2,
+      label: 'Penny Size'
+    };
+  }
+
+  if (value >= 0.5) {
+    return {
+      index: 1,
+      label: 'Small Marble Size'
+    };
+  }
+
+  if (value >= 0.25) {
+    return {
+      index: 1,
+      label: 'Pea Size'
+    };
+  }
+
+  return {
+    index: 0,
+    label: 'None'
+  };
+};
+
+exports.indexForHail = indexForHail;
+
+var indexForIntensity = function (value) {
+  if (value >= 60) {
+    return {
+      index: 5,
+      label: 'Extreme'
+    };
+  }
+
+  if (value >= 55) {
+    return {
+      index: 4,
+      label: 'Very Heavy'
+    };
+  }
+
+  if (value >= 50) {
+    return {
+      index: 3,
+      label: 'Heavy'
+    };
+  }
+
+  if (value >= 35) {
+    return {
+      index: 2,
+      label: 'Moderate'
+    };
+  }
+
+  if (value >= 20) {
+    return {
+      index: 1,
+      label: 'Light'
+    };
+  }
+
+  return {
+    index: 0,
+    label: 'Very Light'
+  };
+};
+
+exports.indexForIntensity = indexForIntensity;
 
 var formatStormCells = function (data) {
   if ((0, _index.isArray)(data)) {
@@ -195,25 +452,35 @@ var getStormCellForecast = function (aeris, forecast) {
   });
   return final;
 };
+/**
+ * Storm Reports
+ */
+
 
 exports.getStormCellForecast = getStormCellForecast;
 
 var getMagnitude = function (data) {
+  var _a, _b, _c, _d;
+
+  if (data === void 0) {
+    data = {};
+  }
+
   var magnitude = '';
 
-  if (data.cat === 'snow' && !(0, _index.isEmpty)(data.detail.snowIN)) {
+  if (data.cat === 'snow' && !(0, _index.isEmpty)((_a = data.detail) === null || _a === void 0 ? void 0 : _a.snowIN)) {
     magnitude = data.detail.snowIN + " inches";
   }
 
-  if (data.cat === 'wind' && !(0, _index.isEmpty)(data.detail.windSpeedMPH)) {
+  if (data.cat === 'wind' && !(0, _index.isEmpty)((_b = data.detail) === null || _b === void 0 ? void 0 : _b.windSpeedMPH)) {
     magnitude = data.detail.windSpeedMPH + " mph";
   }
 
-  if (data.cat === 'rain' && !(0, _index.isEmpty)(data.detail.rainIN)) {
+  if (data.cat === 'rain' && !(0, _index.isEmpty)((_c = data.detail) === null || _c === void 0 ? void 0 : _c.rainIN)) {
     magnitude = data.detail.rainIN + " inches";
   }
 
-  if (data.cat === 'hail' && !(0, _index.isEmpty)(data.detail.hailIN)) {
+  if (data.cat === 'hail' && !(0, _index.isEmpty)((_d = data.detail) === null || _d === void 0 ? void 0 : _d.hailIN)) {
     magnitude = data.detail.hailIN + " inches";
   }
 

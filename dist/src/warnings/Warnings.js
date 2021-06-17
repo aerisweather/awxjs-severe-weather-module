@@ -52,7 +52,9 @@ function (_super) {
 
   Object.defineProperty(Warnings.prototype, "id", {
     get: function () {
-      return 'warnings';
+      var _a;
+
+      return ((_a = this.opts) === null || _a === void 0 ? void 0 : _a.id) || 'warnings';
     },
     enumerable: false,
     configurable: true
@@ -86,7 +88,8 @@ function (_super) {
             stroke: {
               color: "#" + utils.get(item, 'properties.details.color'),
               width: 2,
-              weight: 3
+              weight: 3,
+              adjustOpacity: false
             }
           };
         }
@@ -97,7 +100,12 @@ function (_super) {
   Warnings.prototype.controls = function () {
     return {
       value: this.id,
-      title: 'Warnings'
+      title: 'Warnings',
+      controls: {
+        settings: [{
+          type: 'opacity'
+        }]
+      }
     };
   };
 
@@ -105,13 +113,12 @@ function (_super) {
     return {
       views: [{
         data: function (data) {
-          return data.alert.details;
+          if (!(0, utils.isset)(data)) return;
+          data = data.alert.details;
+          return data;
         },
         renderer: function (data) {
-          if (!data) {
-            return;
-          }
-
+          if (!(0, utils.isset)(data)) return;
           return "<div class=\"alert\">" + (data.body || '').replace(/\n/g, '<br>') + "</div>";
         }
       }]
