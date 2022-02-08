@@ -3,6 +3,7 @@ import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network
 import * as utils from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import { isset } from '@aerisweather/javascript-sdk/dist/utils/index';
+
 class Warnings extends MapSourceModule {
     private request: ApiRequest;
 
@@ -60,6 +61,7 @@ class Warnings extends MapSourceModule {
                 data: (data: any) => {
                     if (!isset(data)) return;
                     data = data.alert.details;
+
                     return data;
                 },
                 renderer: (data: any) => {
