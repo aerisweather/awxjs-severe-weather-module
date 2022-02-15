@@ -4,7 +4,7 @@ import IMapSourceModule from '@aerisweather/javascript-sdk/dist/modules/interfac
 import InteractiveMapApp from '@aerisweather/javascript-sdk/dist/apps/InteractiveMapApp';
 import InteractiveMap from '@aerisweather/javascript-sdk/dist/maps/interactive/InteractiveMap';
 import Account from '@aerisweather/javascript-sdk/dist/account/Account';
-import ApiRequest, { ApiAction } from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
+import ApiRequest from '@aerisweather/javascript-sdk/dist/network/api/ApiRequest';
 import { formatDate, get, isset } from '@aerisweather/javascript-sdk/dist/utils/index';
 import { toName } from '@aerisweather/javascript-sdk/dist/utils/strings';
 import StormCells from './stormcells/StormCells';
@@ -67,7 +67,7 @@ class Severe extends ModuleGroup {
 
         // do custom info panel stuff...
         const localWeatherConfig: any = {
-            request: (data: any) => {
+            request: () => {
                 const request = this.account.api()
                     .endpoint('threats');
                 this._request = request;
@@ -81,7 +81,6 @@ class Severe extends ModuleGroup {
                 renderer: (data: any) => {
                     if (!data[0]) return;
                     const { place } = data[0];
-                    const threatPhrase = 'No Immediate Threats';
                     const returnValue = `
                         <div class="awxjs__app__ui-panel-info__place">
                             <div class="awxjs__app__ui-panel-info__place-name">
@@ -172,17 +171,16 @@ class Severe extends ModuleGroup {
                     return '';
                 }
             }, {
-                data: (data: any) => data,
+                requiresData: true,
+                data: (data: any) => get(data, '[0].periods[0].storms'),
                 renderer: (data: any) => {
-                    if (!data[0]) return;
-
-                    if (data[0].periods[0].storms) {
+                    if (data) {
                         const rows: any[] = [{
                             label: 'Approaching',
-                            value: data[0].periods[0].storms.approaching ? 'Yes' : 'No'
+                            value: data.approaching ? 'Yes' : 'No'
                         }, {
                             label: 'Tornadoes',
-                            value: data[0].periods[0].storms.tornadic ? 'Possible' : 'No'
+                            value: data.tornadic ? 'Possible' : 'No'
                         }];
 
                         const content = rows.reduce((result, row) => {
@@ -207,37 +205,33 @@ class Severe extends ModuleGroup {
                 }
             }, {
                 title: 'Affecting Storms',
-                data: (data: any) => data,
+                requiresData: true,
+                data: (data: any) => get(data, '[0].periods[0].storms'),
                 renderer: (data: any) => {
-                    if (!data[0]) return;
+                    if (data) {
+                        let returnValue = '';
 
-                    if (data[0].periods[0].storms === undefined) return;
-                    let returnValue = '';
-
-                    if (data[0].periods[0].storms) {
-                        const minSpeed = round5(data[0].periods[0].storms.speed.minMPH);
-                        const maxSpeed = round5(data[0].periods[0].storms.speed.maxMPH);
-                        const speedString = (minSpeed !== maxSpeed) ? `${minSpeed}-${maxSpeed}` : maxSpeed;
-                        const threat = data[0].periods[0].storms;
                         returnValue += `
                         <div class="awxjs__app__ui-panel-info__table">
                         <div class="awxjs__ui-row">
                             <div class="awxjs__ui-expand label">Location</div>
                             <div class="awxjs__ui-expand value">
-                                ${data[0].periods[0].storms.distance.avgMI} mi
-                                ${data[0].periods[0].storms.direction.from} (${data[0].periods[0].storms.direction.fromDEG}&deg;)
+                                ${data.distance.avgMI} mi
+                                ${data.direction.from} (${data.direction.fromDEG}&deg;)
                             </div>
                         </div>
                         <div class="awxjs__ui-row">
                             <div class="awxjs__ui-expand label">Movement</div>
                             <div class="awxjs__ui-expand value">
-                                ${data[0].periods[0].storms.direction.to}
-                                at ${round5(data[0].periods[0].storms.speed.avgMPH)} mph
+                                ${data.direction.to}
+                                at ${round5(data.speed.avgMPH)} mph
                             </div>
                         </div></div>`;
+
+                        return returnValue;
                     }
 
-                    return returnValue;
+                    return '';
                 }
             }]
         };
