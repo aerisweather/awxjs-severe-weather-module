@@ -7,19 +7,19 @@ exports.default = void 0;
 
 var _ModuleGroup = _interopRequireDefault(require("@aerisweather/javascript-sdk/dist/modules/ModuleGroup"));
 
-var _Warnings = _interopRequireDefault(require("./warnings/Warnings"));
-
-var _StormThreats = _interopRequireDefault(require("./stormthreats/StormThreats"));
-
-var _LightningThreats = _interopRequireDefault(require("./lightningthreats/LightningThreats"));
-
-var _StormReports = _interopRequireDefault(require("./stormreports/StormReports"));
-
-var _StormCells = _interopRequireDefault(require("./stormcells/StormCells"));
-
 var _index = require("@aerisweather/javascript-sdk/dist/utils/index");
 
 var _strings = require("@aerisweather/javascript-sdk/dist/utils/strings");
+
+var _StormCells = _interopRequireDefault(require("./stormcells/StormCells"));
+
+var _StormReports = _interopRequireDefault(require("./stormreports/StormReports"));
+
+var _LightningThreats = _interopRequireDefault(require("./lightningthreats/LightningThreats"));
+
+var _StormThreats = _interopRequireDefault(require("./stormthreats/StormThreats"));
+
+var _Warnings = _interopRequireDefault(require("./warnings/Warnings"));
 
 var _utils = require("./utils");
 
@@ -189,6 +189,8 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
     };
   }
 };
+/* eslint-disable max-len */
+
 
 var Severe =
 /** @class */
@@ -249,17 +251,12 @@ function (_super) {
   Severe.prototype.initialize = function (account, app, map) {
     var _this = this;
 
-    if (map === void 0) {
-      map = null;
-    }
+    _super.prototype.initialize.call(this, account, app, map);
 
-    if (!this._showThreats) return;
-
-    _super.prototype.initialize.call(this, account, app, map); // do custom info panel stuff...
-
+    if (!this._showThreats) return; // do custom info panel stuff...
 
     var localWeatherConfig = {
-      request: function (data) {
+      request: function () {
         var request = _this.account.api().endpoint('threats');
 
         _this._request = request;
@@ -267,129 +264,87 @@ function (_super) {
       },
       views: [{
         requresData: true,
-        //Location info and threat phrase
+        // Location info and threat phrase
         data: function (data) {
-          if (!data) return null;
           return data;
         },
         renderer: function (data) {
           if (!data[0]) return;
           var place = data[0].place;
-          var threatPhrase = 'No Immediate Threats';
-          var returnValue = "\n                    <div class=\"awxjs__app__ui-panel-info__place\">\n                        <div class=\"awxjs__app__ui-panel-info__place-name\">" + (0, _strings.toName)(place.name) + ", " + place.state.toUpperCase() + "</div>\n                        <div class=\"awxjs__app__ui-panel-info__obs-timestamp\" style=\"font-size:14px\"> " + (0, _index.formatDate)(new Date(data[0].periods[0].timestamp * 1000), 'h:mm a, MMM d, yyyy') + "</div>\n                    ";
-          return returnValue;
+          return "\n                        <div class=\"awxjs__app__ui-panel-info__place\">\n                            <div class=\"awxjs__app__ui-panel-info__place-name\">\n                                " + (0, _strings.toName)(place.name) + ", " + place.state.toUpperCase() + "\n                            </div>\n                            <div class=\"awxjs__app__ui-panel-info__obs-timestamp\" style=\"font-size:14px\">\n                                " + (0, _index.formatDate)(new Date(data[0].periods[0].timestamp * 1000), 'h:mm a, MMM d, yyyy') + "\n                            </div>\n                        </div>\n                    ";
         }
       }, {
         title: 'Active Threats',
         renderer: function (data) {
           if (!data[0]) return;
           var threatPhrase = data[0].periods[0].storms ? data[0].periods[0].storms.phrase.long : 'No Immediate Threats';
-          var snippet = "\n                    <div class=\"awxjs__app__ui-panel-info__threats\">\n                        <div class=\"awxjs__app__ui-panel-info__threats-row\">" + threatPhrase + "</div>\n                    </div>";
-          return snippet;
+          return "\n                        <div class=\"awxjs__app__ui-panel-info__threats\">\n                            <div class=\"awxjs__app__ui-panel-info__threats-row\">" + threatPhrase + "</div>\n                        </div>\n                    ";
         }
       }, {
+        requiresData: true,
         data: function (data) {
-          if (!data) return null;
-          return data;
+          return (0, _index.get)(data, '[0].periods[0].storms');
         },
         renderer: function (data) {
-          if (!data[0]) return;
-
-          if (data[0].periods[0].storms) {
-            var intensity = (0, _utils.indexForIntensity)(data[0].periods[0].storms.dbz.max);
-            var hailSize = {};
-            var rotationScale = {};
-
-            if ((0, _index.isset)(data[0].periods[0].storms.mda)) {
-              rotationScale = (0, _utils.rotationIntensity)(data[0].periods[0].storms.mda.max);
-            } else {
-              rotationScale = {
-                index: 0,
-                label: 'None'
-              };
-            }
-
-            if ((0, _index.isset)(data[0].periods[0].storms.hail)) {
-              console.log(data[0].periods[0].storms.hail);
-              hailSize = (0, _utils.indexForHail)(data[0].periods[0].storms.hail.maxSizeIN);
-            } else {
-              hailSize = {
-                index: 0,
-                label: 'None'
-              };
-            }
-
-            var rows = [{
-              type: 'Precip Intensity',
-              indexString: (0, _utils.getIndexString)(intensity.index),
-              percent: (0, _utils.getPercent)(intensity.index),
-              label: intensity.label
-            }, {
-              type: 'Max Hail Size',
-              indexString: (0, _utils.getIndexString)(hailSize.index),
-              percent: (0, _utils.getPercent)(hailSize.index),
-              label: hailSize.label
-            }, {
-              type: 'Rotation',
-              indexString: (0, _utils.getIndexString)(rotationScale.index),
-              percent: (0, _utils.getPercent)(rotationScale.index),
-              label: rotationScale.label
-            }];
-            var content = rows.reduce(function (result, row) {
-              result.push("<div class=\"awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center\">\n                            <div class=\"awxjs__app__ui-panel-info__hazard-label\">\n                                " + row.type + "\n                            </div>\n                            <div class=\"awxjs__app__ui-panel-info__hazard-bar\">\n                                <div class=\"awxjs__app__ui-panel-info__hazard-bar-inner\">\n                                    <div\n                                        class=\"awxjs__app__ui-panel-info__hazard-bar-progress\n                                            awxjs__app__ui-panel-info__hazard-indice-fill-" + row.indexString + "\"\n                                        style=\"width:" + row.percent + "%;\"\n                                    ></div>\n                                </div>\n                            </div>\n                            <div\n                                class=\"awxjs__app__ui-panel-info__hazard-value\n                                    awxjs__app__ui-panel-info__hazard-value-" + row.indexString + "\"\n                                >" + row.label + "</div>\n                            </div>");
-              return result;
-            }, []).join('\n');
-            return content;
-          } else {
-            return '';
-          }
+          var intensity = (0, _utils.indexForIntensity)(data.dbz.max);
+          var hailSize = {};
+          var rotationScale = {};
+          rotationScale = (0, _index.isset)(data.mda) ? (0, _utils.rotationIntensity)(data.mda.max) : {
+            index: 0,
+            label: 'None'
+          };
+          hailSize = (0, _index.isset)(data.hail) ? (0, _utils.indexForHail)(data.hail.maxSizeIN) : {
+            index: 0,
+            label: 'None'
+          };
+          var rows = [{
+            type: 'Precip Intensity',
+            indexString: (0, _utils.getIndexString)(intensity.index),
+            percent: (0, _utils.getPercent)(intensity.index),
+            label: intensity.label
+          }, {
+            type: 'Max Hail Size',
+            indexString: (0, _utils.getIndexString)(hailSize.index),
+            percent: (0, _utils.getPercent)(hailSize.index),
+            label: hailSize.label
+          }, {
+            type: 'Rotation',
+            indexString: (0, _utils.getIndexString)(rotationScale.index),
+            percent: (0, _utils.getPercent)(rotationScale.index),
+            label: rotationScale.label
+          }];
+          return rows.reduce(function (result, row) {
+            result.push("<div class=\"awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center\">\n                            <div class=\"awxjs__app__ui-panel-info__hazard-label\">\n                                " + row.type + "\n                            </div>\n                            <div class=\"awxjs__app__ui-panel-info__hazard-bar\">\n                                <div class=\"awxjs__app__ui-panel-info__hazard-bar-inner\">\n                                    <div\n                                        class=\"awxjs__app__ui-panel-info__hazard-bar-progress\n                                            awxjs__app__ui-panel-info__hazard-indice-fill-" + row.indexString + "\"\n                                        style=\"width:" + row.percent + "%;\"\n                                    ></div>\n                                </div>\n                            </div>\n                            <div\n                                class=\"awxjs__app__ui-panel-info__hazard-value\n                                    awxjs__app__ui-panel-info__hazard-value-" + row.indexString + "\"\n                                >" + row.label + "</div>\n                            </div>");
+            return result;
+          }, []).join('\n');
         }
       }, {
+        requiresData: true,
         data: function (data) {
-          if (!data) return null;
-          return data;
+          return (0, _index.get)(data, '[0].periods[0].storms');
         },
         renderer: function (data) {
-          if (!data[0]) return;
-          var returnValue = '';
-
-          if (data[0].periods[0].storms) {
-            var rows = [{
-              label: 'Approaching',
-              value: data[0].periods[0].storms.approaching ? 'Yes' : 'No'
-            }, {
-              label: 'Tornadoes',
-              value: data[0].periods[0].storms.tornadic ? 'Possible' : 'No'
-            }];
-            var content = rows.reduce(function (result, row) {
-              result.push("\n                                <div class=\"awxjs__ui-row\">\n                                    <div class=\"awxjs__ui-expand label\">" + row.label + "</div>\n                                    <div class=\"awxjs__ui-expand value\">" + row.value + "</div>\n                                </div>\n                            ");
-              return result;
-            }, []).join('\n');
-            return "\n                            <div class=\"awxjs__app__ui-panel-info__table\">\n                                " + content + "\n                            </div>\n                        ";
-          } else {
-            return '';
-          }
+          var rows = [{
+            label: 'Approaching',
+            value: data.approaching ? 'Yes' : 'No'
+          }, {
+            label: 'Tornadoes',
+            value: data.tornadic ? 'Possible' : 'No'
+          }];
+          var content = rows.reduce(function (result, row) {
+            result.push("\n                                <div class=\"awxjs__ui-row\">\n                                    <div class=\"awxjs__ui-expand label\">" + row.label + "</div>\n                                    <div class=\"awxjs__ui-expand value\">" + row.value + "</div>\n                                </div>\n                            ");
+            return result;
+          }, []).join('\n');
+          return "\n                            <div class=\"awxjs__app__ui-panel-info__table\">\n                                " + content + "\n                            </div>\n                        ";
         }
       }, {
         title: 'Affecting Storms',
+        requiresData: true,
         data: function (data) {
-          if (!data) return;
-          return data;
+          return (0, _index.get)(data, '[0].periods[0].storms');
         },
         renderer: function (data) {
-          if (!data[0]) return;
-          if (data[0].periods[0].storms == undefined) return;
-          var returnValue = '';
-
-          if (data[0].periods[0].storms) {
-            var minSpeed = (0, _utils.round5)(data[0].periods[0].storms.speed.minMPH);
-            var maxSpeed = (0, _utils.round5)(data[0].periods[0].storms.speed.maxMPH);
-            var speedString = minSpeed != maxSpeed ? minSpeed + "-" + maxSpeed : maxSpeed;
-            var threat = data[0].periods[0].storms;
-            returnValue += "\n                        <div class=\"awxjs__app__ui-panel-info__table\">\n                        <div class=\"awxjs__ui-row\">\n                            <div class=\"awxjs__ui-expand label\">Location</div>\n                            <div class=\"awxjs__ui-expand value\">" + data[0].periods[0].storms.distance.avgMI + " mi " + data[0].periods[0].storms.direction.from + " (" + data[0].periods[0].storms.direction.fromDEG + "&deg;)</div>\n                        </div>\n                        <div class=\"awxjs__ui-row\">\n                            <div class=\"awxjs__ui-expand label\">Movement</div>\n                            <div class=\"awxjs__ui-expand value\">" + data[0].periods[0].storms.direction.to + " at " + (0, _utils.round5)(data[0].periods[0].storms.speed.avgMPH) + " mph</div>\n                        </div></div>";
-          }
-
-          return returnValue;
+          return "\n                    <div class=\"awxjs__app__ui-panel-info__table\">\n                        <div class=\"awxjs__ui-row\">\n                            <div class=\"awxjs__ui-expand label\">Location</div>\n                            <div class=\"awxjs__ui-expand value\">\n                                " + data.distance.avgMI + " mi\n                                " + data.direction.from + " (" + data.direction.fromDEG + "&deg;)\n                            </div>\n                        </div>\n                        <div class=\"awxjs__ui-row\">\n                            <div class=\"awxjs__ui-expand label\">Movement</div>\n                            <div class=\"awxjs__ui-expand value\">\n                                " + data.direction.to + "\n                                at " + (0, _utils.round5)(data.speed.avgMPH) + " mph\n                            </div>\n                        </div>\n                    </div>\n                ";
         }
       }]
     };
