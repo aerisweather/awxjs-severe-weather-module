@@ -113,37 +113,36 @@ class Severe extends ModuleGroup {
                 requiresData: true,
                 data: (data: any) => get(data, '[0].periods[0].storms'),
                 renderer: (data: any) => {
-                    if (data) {
-                        const intensity = indexForIntensity(data.dbz.max);
-                        let hailSize: any = {};
-                        let rotationScale: any = {};
+                    const intensity = indexForIntensity(data.dbz.max);
+                    let hailSize: any = {};
+                    let rotationScale: any = {};
 
-                        rotationScale = isset(data.mda)
-                            ? rotationIntensity(data.mda.max)
-                            : { index: 0, label: 'None' };
+                    rotationScale = isset(data.mda)
+                        ? rotationIntensity(data.mda.max)
+                        : { index: 0, label: 'None' };
 
-                        hailSize = isset(data.hail)
-                            ? indexForHail(data.hail.maxSizeIN)
-                            : { index: 0, label: 'None' };
+                    hailSize = isset(data.hail)
+                        ? indexForHail(data.hail.maxSizeIN)
+                        : { index: 0, label: 'None' };
 
-                        const rows: any[] = [{
-                            type: 'Precip Intensity',
-                            indexString: getIndexString(intensity.index),
-                            percent: getPercent(intensity.index),
-                            label: intensity.label
-                        }, {
-                            type: 'Max Hail Size',
-                            indexString: getIndexString(hailSize.index),
-                            percent: getPercent(hailSize.index),
-                            label: hailSize.label
-                        }, {
-                            type: 'Rotation',
-                            indexString: getIndexString(rotationScale.index),
-                            percent: getPercent(rotationScale.index),
-                            label: rotationScale.label
-                        }];
-                        const content = rows.reduce((result, row) => {
-                            result.push(`<div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
+                    const rows: any[] = [{
+                        type: 'Precip Intensity',
+                        indexString: getIndexString(intensity.index),
+                        percent: getPercent(intensity.index),
+                        label: intensity.label
+                    }, {
+                        type: 'Max Hail Size',
+                        indexString: getIndexString(hailSize.index),
+                        percent: getPercent(hailSize.index),
+                        label: hailSize.label
+                    }, {
+                        type: 'Rotation',
+                        indexString: getIndexString(rotationScale.index),
+                        percent: getPercent(rotationScale.index),
+                        label: rotationScale.label
+                    }];
+                    const content = rows.reduce((result, row) => {
+                        result.push(`<div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
                             <div class="awxjs__app__ui-panel-info__hazard-label">
                                 ${row.type}
                             </div>
@@ -162,53 +161,46 @@ class Severe extends ModuleGroup {
                                 >${row.label}</div>
                             </div>`);
 
-                            return result;
-                        }, []).join('\n');
+                        return result;
+                    }, []).join('\n');
 
-                        return content;
-                    }
-
-                    return '';
+                    return content;
                 }
             }, {
                 requiresData: true,
                 data: (data: any) => get(data, '[0].periods[0].storms'),
                 renderer: (data: any) => {
-                    if (data) {
-                        const rows: any[] = [{
-                            label: 'Approaching',
-                            value: data.approaching ? 'Yes' : 'No'
-                        }, {
-                            label: 'Tornadoes',
-                            value: data.tornadic ? 'Possible' : 'No'
-                        }];
+                    const rows: any[] = [{
+                        label: 'Approaching',
+                        value: data.approaching ? 'Yes' : 'No'
+                    }, {
+                        label: 'Tornadoes',
+                        value: data.tornadic ? 'Possible' : 'No'
+                    }];
 
-                        const content = rows.reduce((result, row) => {
-                            result.push(`
+                    const content = rows.reduce((result, row) => {
+                        result.push(`
                                 <div class="awxjs__ui-row">
                                     <div class="awxjs__ui-expand label">${row.label}</div>
                                     <div class="awxjs__ui-expand value">${row.value}</div>
                                 </div>
                             `);
 
-                            return result;
-                        }, []).join('\n');
+                        return result;
+                    }, []).join('\n');
 
-                        return `
+                    return `
                             <div class="awxjs__app__ui-panel-info__table">
                                 ${content}
                             </div>
                         `;
-                    }
-
-                    return '';
                 }
             }, {
                 title: 'Affecting Storms',
                 requiresData: true,
                 data: (data: any) => get(data, '[0].periods[0].storms'),
                 renderer: (data: any) => {
-                    if (data) {
+                   // if (data) {
                         let returnValue = '';
 
                         returnValue += `
@@ -229,9 +221,9 @@ class Severe extends ModuleGroup {
                         </div></div>`;
 
                         return returnValue;
-                    }
+                  //  }
 
-                    return '';
+                    //return '';
                 }
             }]
         };
