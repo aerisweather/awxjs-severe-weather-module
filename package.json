@@ -1,7 +1,7 @@
 {
     "name": "awxjs-severe-weather-module",
     "moduleName": "Severe",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": "index.js",
     "author": "Ben Collin",
     "homepage": "https://www.aerisweather.com/support/docs/toolkits/aeris-js-sdk/",
