@@ -81,7 +81,8 @@ class Severe extends ModuleGroup {
                 renderer: (data: any) => {
                     if (!data[0]) return;
                     const { place } = data[0];
-                    const returnValue = `
+
+                    return `
                         <div class="awxjs__app__ui-panel-info__place">
                             <div class="awxjs__app__ui-panel-info__place-name">
                                 ${toName(place.name)}, ${place.state.toUpperCase()}
@@ -91,8 +92,6 @@ class Severe extends ModuleGroup {
                             </div>
                         </div>
                     `;
-
-                    return returnValue;
                 }
             }, {
                 title: 'Active Threats',
@@ -101,13 +100,12 @@ class Severe extends ModuleGroup {
                     const threatPhrase = (data[0].periods[0].storms)
                         ? data[0].periods[0].storms.phrase.long
                         : 'No Immediate Threats';
-                    const snippet = `
+
+                    return `
                         <div class="awxjs__app__ui-panel-info__threats">
                             <div class="awxjs__app__ui-panel-info__threats-row">${threatPhrase}</div>
                         </div>
                     `;
-
-                    return snippet;
                 }
             }, {
                 requiresData: true,
@@ -141,7 +139,8 @@ class Severe extends ModuleGroup {
                         percent: getPercent(rotationScale.index),
                         label: rotationScale.label
                     }];
-                    const content = rows.reduce((result, row) => {
+
+                    return rows.reduce((result, row) => {
                         result.push(`<div class="awxjs__app__ui-panel-info__hazard awxjs__ui-cols align-center">
                             <div class="awxjs__app__ui-panel-info__hazard-label">
                                 ${row.type}
@@ -163,8 +162,6 @@ class Severe extends ModuleGroup {
 
                         return result;
                     }, []).join('\n');
-
-                    return content;
                 }
             }, {
                 requiresData: true,
@@ -199,12 +196,8 @@ class Severe extends ModuleGroup {
                 title: 'Affecting Storms',
                 requiresData: true,
                 data: (data: any) => get(data, '[0].periods[0].storms'),
-                renderer: (data: any) => {
-                   // if (data) {
-                        let returnValue = '';
-
-                        returnValue += `
-                        <div class="awxjs__app__ui-panel-info__table">
+                renderer: (data: any) => `
+                    <div class="awxjs__app__ui-panel-info__table">
                         <div class="awxjs__ui-row">
                             <div class="awxjs__ui-expand label">Location</div>
                             <div class="awxjs__ui-expand value">
@@ -218,13 +211,9 @@ class Severe extends ModuleGroup {
                                 ${data.direction.to}
                                 at ${round5(data.speed.avgMPH)} mph
                             </div>
-                        </div></div>`;
-
-                        return returnValue;
-                  //  }
-
-                    //return '';
-                }
+                        </div>
+                    </div>
+                `
             }]
         };
 
